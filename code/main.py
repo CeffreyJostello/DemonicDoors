@@ -47,7 +47,6 @@ class Game:
                     if event.key == pygame.K_d:
                         self.frame.entities.player.stop('right')
 
-
             self.frame.render(self.display)
             
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))

@@ -15,18 +15,15 @@ class Entities:
         self.entity_tiles = {}
         self.player = Entity((16, 16), (8, 8), 'player') #initializes player
         self.entities_in_game = []
-        
         self.entities_in_game.append(self.player)
-
-    def spawn(self, name:str, location:tuple):
-        self.entities_in_game.append(self.entities[name])
-
+        
+    def check_collision(self, pos:str):
+        pass
     def update(self): #returns
+        
         self.entity_tiles = {}
         for entity in self.entities_in_game:
-            entity_tile = entity.get_entity(self.tilemap)
-            string_coordinate = str(entity_tile['location'][0]) + ';' + str(entity_tile['location'][1])
-            self.entity_tiles[string_coordinate] = entity_tile
+            entity.get_entity(self.entity_tiles)
 
         return self.entity_tiles #return {'x;y':{'name':player, 'location':(x, y)}}
 

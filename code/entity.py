@@ -3,7 +3,7 @@ import pygame
 
 class Entity:
     
-    def __init__(self, position, size, name):
+    def __init__(self, position:tuple, size:tuple, name:str):
         super().__init__()
         self.name = name #name of the entity for blitting purposes
         self.position = list(position) #postion data as a list
@@ -37,5 +37,6 @@ class Entity:
 
 
         # print(self.position)
+        coordinate = str(self.position[0]) + ';' + str(self.position[1])
         
-        return {'name':self.name, 'location':(self.position[0], self.position[1])}
+        tilemap[coordinate] = {'name':self.name, 'location':(self.position[0], self.position[1])}
