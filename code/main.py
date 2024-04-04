@@ -1,5 +1,6 @@
 import pygame, sys
-from render import Frame, TileMap, Entities
+from render import Frame
+from levels import Levels
 from settings import *
 
 class Game:
@@ -10,8 +11,8 @@ class Game:
         pygame.display.set_caption('Demonic Doors')
         self.clock = pygame.time.Clock()
         # self.player = Player()
-        self.tilemap = TileMap() #Initalizes tile map
-        self.frame = Frame(self.tilemap)
+        self.levels = Levels() #Initalizes tile map
+        self.frame = Frame(self.levels)
 
     def run(self): 
 
