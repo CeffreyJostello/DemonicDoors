@@ -19,18 +19,17 @@ class MapGeneration:
         
         return  (self.tile_size * (coordinate[0] // self.tile_size), self.tile_size * (coordinate[1] // self.tile_size))
         
-    def print_cells(self, maze_dimensions):
-        self.progress = 1
-        for y in range(self.size[1]):
+    def print_cells(self, maze_cells):
+        line = ''
+        for y in range(len(maze_cells)):
 
-            for x in range(self.size_x):
-                if self.maze_cells[y][x]['visited']:
-                    print('●', sep=' ', end=' ')
-                    self.progress += 1
+            for x in range(len(maze_cells[0])):
+                if maze_cells[y][x]['visited']:
+                    line += '* '
                 else:
-                    print('o', sep=' ', end=' ')
-            print()
-
+                    line += 'o '
+            line += '\n'
+        return line
     def check_completion_status(self, cell_array:list) -> bool:
         """_summary_
             Checks if all cells are visited.
@@ -87,7 +86,7 @@ class MapGeneration:
         """
         
         x_max = len(array[0]) - 1 #max index
-        y_max = len(array[1]) - 1
+        y_max = len(array) - 1
         
         directions_to_check = [(1, 0), (0, 1), (0, -1), (-1, 0)] #right, down, up, left
         
@@ -112,6 +111,7 @@ class MapGeneration:
             
     
     def generate_basic_maze(self, maze_dimensions=(5, 5), start_coordinate=(0, 0), scale=1):    
+        
         ######INITIALIZE VARIABLE######
         start_coordinates =  self.get_corner(start_coordinate) #makes sure starting coord is one the tile grid
         cell_location = [0, 0] #cell index for fds
@@ -121,6 +121,7 @@ class MapGeneration:
         odds = [odd for odd in range(max([maze_dimensions[0], maze_dimensions[1]]) * 2) if odd % 2] #Used to establish cell pattern in tiles
         maze_cells[cell_location[1]][cell_location[0]]['visited'] = True 
         print(f'***Generating basic maze with size {maze_dimensions} at {start_coordinate} on the screen.')
+        
         ######GENERATE TILES######
         for y_coordinate in range(maze_dimensions[1] * 2 + 1):
             
@@ -133,17 +134,18 @@ class MapGeneration:
         self.set_tile(tiles_in_maze, (16, 16), 'ground')
         
         while self.check_completion_status(maze_cells):
-            
             next_cells = self.next_possible_steps(maze_cells, self.check_array_bounds(cell_location, maze_cells), cell_location)
             
-            if next_cells != []: #Steps if there is an available spot
+            if next_cells != []: #Steps if there is an available spot\
+                
                 ######STEP######
                 next_cell = choice(next_cells)
                 
+                current_tile = (odds[cell_location[0]] * self.tile_size, odds[cell_location[1]] * self.tile_size)
                 next_tile = (odds[next_cell[0]] * self.tile_size, odds[next_cell[1]] * self.tile_size)
-                
-                wall_tile = ((next_tile[0] + (next_cell[0] - cell_location[0]) * self.tile_size), (next_tile[1] + (next_cell[1] - cell_location[1]) * self.tile_size))
-
+                wall_tile = ((odds[next_cell[0]] + (cell_location[0] - next_cell[0])) * self.tile_size, (odds[next_cell[1]] + (cell_location[1] - next_cell[1])) * self.tile_size)
+            
+                self.set_tile(tiles_in_maze, current_tile, 'ground')
                 self.set_tile(tiles_in_maze, wall_tile, 'ground')
                 self.set_tile(tiles_in_maze, next_tile, 'ground')
                 
@@ -152,9 +154,9 @@ class MapGeneration:
                 maze_cells[cell_location[1]][cell_location[0]]['visited'] = True 
                 
             else: #Goes back and checks for spots
+                
                 ######BACKTRACK######
                 cell_location = list(visited_cells.pop())
-            
         self.tiles.update(tiles_in_maze)
                 
     def get_tile_map(self):

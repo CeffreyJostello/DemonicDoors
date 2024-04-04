@@ -9,6 +9,6 @@ class Levels:
         pass
     def level_1(self):
         self.clear_tiles()
-        self.mapgen.generate_basic_maze((10, 10))
+        self.mapgen.generate_basic_maze((5, 5))
         return self.mapgen.get_tile_map()
     

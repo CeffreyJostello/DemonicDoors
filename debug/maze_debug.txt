@@ -1,0 +1,234 @@
+* o o o o 
+o o o o o 
+o o o o o 
+o o o o o 
+o o o o o 
+***STEP***
+Current cell: [0, 0] Next cell: [0, 1]
+Current tile: (16, 16) Wall tile: (16, 32) Next tile: (16, 48)
+* o o o o 
+* o o o o 
+o o o o o 
+o o o o o 
+o o o o o 
+***STEP***
+Current cell: [0, 1] Next cell: [0, 2]
+Current tile: (16, 48) Wall tile: (16, 64) Next tile: (16, 80)
+* o o o o 
+* o o o o 
+* o o o o 
+o o o o o 
+o o o o o 
+***STEP***
+Current cell: [0, 2] Next cell: [1, 2]
+Current tile: (16, 80) Wall tile: (32, 80) Next tile: (48, 80)
+* o o o o 
+* o o o o 
+* * o o o 
+o o o o o 
+o o o o o 
+***STEP***
+Current cell: [1, 2] Next cell: [2, 2]
+Current tile: (48, 80) Wall tile: (64, 80) Next tile: (80, 80)
+* o o o o 
+* o o o o 
+* * * o o 
+o o o o o 
+o o o o o 
+***STEP***
+Current cell: [2, 2] Next cell: [3, 2]
+Current tile: (80, 80) Wall tile: (96, 80) Next tile: (112, 80)
+* o o o o 
+* o o o o 
+* * * * o 
+o o o o o 
+o o o o o 
+***STEP***
+Current cell: [3, 2] Next cell: [3, 3]
+Current tile: (112, 80) Wall tile: (112, 96) Next tile: (112, 112)
+* o o o o 
+* o o o o 
+* * * * o 
+o o o * o 
+o o o o o 
+***STEP***
+Current cell: [3, 3] Next cell: [2, 3]
+Current tile: (112, 112) Wall tile: (96, 112) Next tile: (80, 112)
+* o o o o 
+* o o o o 
+* * * * o 
+o o * * o 
+o o o o o 
+***STEP***
+Current cell: [2, 3] Next cell: [2, 4]
+Current tile: (80, 112) Wall tile: (80, 128) Next tile: (80, 144)
+* o o o o 
+* o o o o 
+* * * * o 
+o o * * o 
+o o * o o 
+***STEP***
+Current cell: [2, 4] Next cell: [1, 4]
+Current tile: (80, 144) Wall tile: (64, 144) Next tile: (48, 144)
+* o o o o 
+* o o o o 
+* * * * o 
+o o * * o 
+o * * o o 
+***STEP***
+Current cell: [1, 4] Next cell: [1, 3]
+Current tile: (48, 144) Wall tile: (48, 128) Next tile: (48, 112)
+* o o o o 
+* o o o o 
+* * * * o 
+o * * * o 
+o * * o o 
+***STEP***
+Current cell: [1, 3] Next cell: [0, 3]
+Current tile: (48, 112) Wall tile: (32, 112) Next tile: (16, 112)
+* o o o o 
+* o o o o 
+* * * * o 
+* * * * o 
+o * * o o 
+***STEP***
+Current cell: [0, 3] Next cell: [0, 4]
+Current tile: (16, 112) Wall tile: (16, 128) Next tile: (16, 144)
+* o o o o 
+* o o o o 
+* * * * o 
+* * * * o 
+* * * o o 
+***BACK TRACKING***
+* o o o o 
+* o o o o 
+* * * * o 
+* * * * o 
+* * * o o 
+***BACK TRACKING***
+* o o o o 
+* o o o o 
+* * * * o 
+* * * * o 
+* * * o o 
+***BACK TRACKING***
+* o o o o 
+* o o o o 
+* * * * o 
+* * * * o 
+* * * o o 
+***BACK TRACKING***
+* o o o o 
+* o o o o 
+* * * * o 
+* * * * o 
+* * * o o 
+***BACK TRACKING***
+* o o o o 
+* o o o o 
+* * * * o 
+* * * * o 
+* * * o o 
+***STEP***
+Current cell: [2, 4] Next cell: [3, 4]
+Current tile: (80, 144) Wall tile: (96, 144) Next tile: (112, 144)
+* o o o o 
+* o o o o 
+* * * * o 
+* * * * o 
+* * * * o 
+***STEP***
+Current cell: [3, 4] Next cell: [4, 4]
+Current tile: (112, 144) Wall tile: (128, 144) Next tile: (144, 144)
+* o o o o 
+* o o o o 
+* * * * o 
+* * * * o 
+* * * * * 
+***STEP***
+Current cell: [4, 4] Next cell: [4, 3]
+Current tile: (144, 144) Wall tile: (144, 128) Next tile: (144, 112)
+* o o o o 
+* o o o o 
+* * * * o 
+* * * * * 
+* * * * * 
+***STEP***
+Current cell: [4, 3] Next cell: [4, 2]
+Current tile: (144, 112) Wall tile: (144, 96) Next tile: (144, 80)
+* o o o o 
+* o o o o 
+* * * * * 
+* * * * * 
+* * * * * 
+***STEP***
+Current cell: [4, 2] Next cell: [4, 1]
+Current tile: (144, 80) Wall tile: (144, 64) Next tile: (144, 48)
+* o o o o 
+* o o o * 
+* * * * * 
+* * * * * 
+* * * * * 
+***STEP***
+Current cell: [4, 1] Next cell: [4, 0]
+Current tile: (144, 48) Wall tile: (144, 32) Next tile: (144, 16)
+* o o o * 
+* o o o * 
+* * * * * 
+* * * * * 
+* * * * * 
+***STEP***
+Current cell: [4, 0] Next cell: [3, 0]
+Current tile: (144, 16) Wall tile: (128, 16) Next tile: (112, 16)
+* o o * * 
+* o o o * 
+* * * * * 
+* * * * * 
+* * * * * 
+***STEP***
+Current cell: [3, 0] Next cell: [2, 0]
+Current tile: (112, 16) Wall tile: (96, 16) Next tile: (80, 16)
+* o * * * 
+* o o o * 
+* * * * * 
+* * * * * 
+* * * * * 
+***STEP***
+Current cell: [2, 0] Next cell: [2, 1]
+Current tile: (80, 16) Wall tile: (80, 32) Next tile: (80, 48)
+* o * * * 
+* o * o * 
+* * * * * 
+* * * * * 
+* * * * * 
+***STEP***
+Current cell: [2, 1] Next cell: [3, 1]
+Current tile: (80, 48) Wall tile: (96, 48) Next tile: (112, 48)
+* o * * * 
+* o * * * 
+* * * * * 
+* * * * * 
+* * * * * 
+***BACK TRACKING***
+* o * * * 
+* o * * * 
+* * * * * 
+* * * * * 
+* * * * * 
+***BACK TRACKING***
+* o * * * 
+* o * * * 
+* * * * * 
+* * * * * 
+* * * * * 
+***STEP***
+Current cell: [2, 1] Next cell: [1, 1]
+Current tile: (80, 48) Wall tile: (64, 48) Next tile: (48, 48)
+* o * * * 
+* * * * * 
+* * * * * 
+* * * * * 
+* * * * * 
+***STEP***
+Current cell: [1, 1] Next cell: [1, 0]
+Current tile: (48, 48) Wall tile: (48, 32) Next tile: (48, 16)
