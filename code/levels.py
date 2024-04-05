@@ -5,12 +5,11 @@ class Levels:
     
     def __init__(self):
         self.mapgen = MapGeneration()
-        
-    def clear_tiles(self):
-        pass
     
     def level_1(self):
-        self.clear_tiles()
-        self.mapgen.generate_basic_maze((5, 5))
+        self.mapgen.clear_tile_map
+        self.mapgen.generate_basic_maze((10, 20))
+        self.mapgen.crater('ground', 5, 20)
+        self.mapgen.crater('wall', 3, 10)
         return self.mapgen.get_tile_map()
     

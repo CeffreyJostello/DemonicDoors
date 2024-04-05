@@ -16,14 +16,31 @@ class Entities:
         self.player = Entity((16, 16), (8, 8), 'player') #initializes player
         self.entities_in_game = []
         self.entities_in_game.append(self.player)
+        self.directions = [(-1, -1), (0, -1), (1, -1), (-1, 0), (0, 0), (1, 0), (-1, 1), (0, 1), (1, 1)]
         
-    def check_collision(self, pos:str):
-        pass
+    def tiles_around(self, location:tuple) -> dict:
+        
+        tiles = {} #stores tiles in a list to return
+        
+        grip_postion = ((location[0] // 16) * 16, (location[1] // 16) * 16)
+        
+        for direction in self.directions:
+            tile_index = str(grip_postion[0] + direction[0]) + ';' + str(grip_postion[1] + direction[1])
+            if self.tilemap[tile_index] == None:
+                continue
+            else:
+                tiles.update(self.tilemap[tile_index])
+        print(tiles)
+        return tiles
+    
+    
     def update(self): #returns
         
         self.entity_tiles = {}
+        
         for entity in self.entities_in_game:
-            entity.get_entity(self.entity_tiles)
+            
+            entity.update_entity(self.entity_tiles)
 
         return self.entity_tiles #return {'x;y':{'name':player, 'location':(x, y)}}
 

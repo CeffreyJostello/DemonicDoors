@@ -65,12 +65,47 @@ class MapGeneration:
 
         tile_map[str(location[0]) + ';' + str(location[1])]['name'] = tile_name
         
-    def sploch(self, tile_map:dict):
-        pass
-    
-    def crater(self, tile_map:dict, tile_name:str, radius:int):
-        pass
-    
+    def sploch(self, radius:int, sploches:int) -> list:
+        
+        sploch_points = []
+        
+        if radius ** 2 > len(self.tiles):
+            print('Radius is too big for tilemap cannot perform sploch')
+            return None
+        elif len(self.tiles) == 0:
+            print('Cannot perform sploch no tiles in self.tiles')
+            return None
+        
+        while len(sploch_points) != sploches:
+            origin, tile = choice(list(self.tiles.items()))
+            print(origin)
+            coordinate = [int(coord) for coord in origin.split(';')]
+            rightmost_tile = str(coordinate[0] + (self.tile_size * (radius + 2))) + ';' + str(coordinate[1])
+            downmost_tile = str(coordinate[0]) + ';' + str(coordinate[1] + (self.tile_size * (radius + 2)))
+            try:
+                t = self.tiles[rightmost_tile]
+                t = self.tiles[downmost_tile]
+                sploch_points.append(origin)
+                
+            except KeyError:
+                continue
+            
+        return sploch_points
+            
+            
+    def crater(self, tile_name:str, radius:int, amount:int):
+        
+        start_points = self.sploch(radius, amount)
+        for points in start_points:
+            coordinate = [int(coord) for coord in points.split(';')]
+            start_x = coordinate[0]
+            print('Starting Coord:', coordinate)
+            for y in range(radius):
+                coordinate[0] = start_x
+                for x in range(radius):
+                    self.set_tile(self.tiles, (coordinate[0], coordinate[1]), tile_name)
+                    coordinate[0] += self.tile_size
+                coordinate[1] += self.tile_size
     
     def check_array_bounds(self, cell_location:list, array) -> list:
         """_summary_
@@ -158,6 +193,9 @@ class MapGeneration:
                 ######BACKTRACK######
                 cell_location = list(visited_cells.pop())
         self.tiles.update(tiles_in_maze)
-                
+        
+    def clear_tile_map(self):
+        self.tiles = {}
+        
     def get_tile_map(self):
         return self.tiles

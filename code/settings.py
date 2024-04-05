@@ -10,14 +10,9 @@ COLOR_KEY = (0, 255, 0)
 render_order = {
     
 }
-# assets = {
-#     # 'player': load_image('sprites/entities/johny/DinkleDan.png'),
-#     'wall' : load_image('sprites/tiles/wall.png'),
-#     # 'ground' : load_image('sprites/tiles/ground.png')
-# }
-
-# PLAYER_SIZE = [assets['player'].get_width(), assets['player'].get_height()]
-
+physics_tile = {
+    'wall'
+}
 items = {
 
 }

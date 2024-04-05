@@ -27,7 +27,7 @@ class Entity:
         key = {'up':0, 'down':1, 'left':2, 'right':3}
         self.direction[key[direction]] = False
 
-    def get_entity(self, tilemap): #This creates a new image of an anetity to be passed to entities.
+    def update_entity(self, tilemap): #This creates a new image of an anetity to be passed to entities.
 
         self.position[1] -= (self.direction[0] * self.speed)
         self.position[1] += (self.direction[1] * self.speed)
