@@ -1,20 +1,32 @@
+from typing import Any
 from settings import *
 import pygame
 
 class Entity:
-    
     def __init__(self, position:tuple, size:tuple, name:str):
-        super().__init__()
         self.name = name #name of the entity for blitting purposes
         self.position = list(position) #postion data as a list
         # print('Position:', self.position)
         self.size = size #pixel size of the entity
         self.direction = [False, False, False, False] #up down left right
         self.speed = 1 #sets speed of the player
-
-    def generate_hitbox(self):
-        return pygame.Rect(self.position[0], self.position[1], self.size[0], self.size[1])
-
+        self.health = 1
+        
+    def __call__(self):
+        pass
+        
+    def kill(self):
+        self.health = 0
+        
+    def damage(self, hp:int):
+        self.healt -= hp
+        
+    def is_dead(self):
+        
+        if self.health == 0:
+            return True
+        else:
+            return False
 
     def move(self, direction:str):
         """
@@ -26,6 +38,9 @@ class Entity:
     def stop(self, direction:str):
         key = {'up':0, 'down':1, 'left':2, 'right':3}
         self.direction[key[direction]] = False
+        
+    def generate_hitbox(self):
+        return pygame.Rect(self.position[0], self.position[1], self.size[0], self.size[1])
     
     def tiles_around(self, location:tuple, tilemap:dict) -> dict:
         
@@ -77,3 +92,10 @@ class Entity:
         coordinate = str(self.position[0]) + ';' + str(self.position[1])
         
         entity_tiles[coordinate] = {'name':self.name, 'location':(self.position[0], self.position[1])}
+
+
+# class Player(Entity((16, 16), (8, 8), 'player')):
+#     def __init__(self):
+#         super().__init__()
+#         self.health = 10
+    

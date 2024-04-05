@@ -16,14 +16,14 @@ class Entities:
         self.player = Entity((16, 16), (8, 8), 'player') #initializes player
         self.entities_in_game = []
         self.entities_in_game.append(self.player)
-        
+        print(self.entities_in_game)
     
     def update(self): #returns
         
         self.entity_tiles = {}
         
         for entity in self.entities_in_game:
-            
+
             entity.update_entity(self.tilemap, self.entity_tiles)
 
         return self.entity_tiles #return {'x;y':{'name':player, 'location':(x, y)}}
