@@ -5,11 +5,12 @@ SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
 PIXEL_SIZE = 16
 PLAYER_SPAWN = (16, 16)
-
+DIRECTIONS = [(-1, -1), (0, -1), (1, -1), (-1, 0), (0, 0), (1, 0), (-1, 1), (0, 1), (1, 1)]
 COLOR_KEY = (0, 255, 0)
 render_order = {
     
 }
+
 physics_tile = {
     'wall'
 }
