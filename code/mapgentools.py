@@ -78,7 +78,6 @@ class MapGeneration:
         
         while len(sploch_points) != sploches:
             origin, tile = choice(list(self.tiles.items()))
-            print(origin)
             coordinate = [int(coord) for coord in origin.split(';')]
             rightmost_tile = str(coordinate[0] + (self.tile_size * (radius + 2))) + ';' + str(coordinate[1])
             downmost_tile = str(coordinate[0]) + ';' + str(coordinate[1] + (self.tile_size * (radius + 2)))
@@ -99,7 +98,6 @@ class MapGeneration:
         for points in start_points:
             coordinate = [int(coord) for coord in points.split(';')]
             start_x = coordinate[0]
-            print('Starting Coord:', coordinate)
             for y in range(radius):
                 coordinate[0] = start_x
                 for x in range(radius):
@@ -166,7 +164,7 @@ class MapGeneration:
                 tiles_in_maze[coordinate] = Tiles().wall
                 tiles_in_maze[coordinate]['location'] = (x_coordinate * self.tile_size + start_coordinates[0], y_coordinate * self.tile_size + start_coordinates[1])
                 
-        self.set_tile(tiles_in_maze, (16, 16), 'ground')
+        self.set_tile(tiles_in_maze, (16 + start_coordinate[0], 16 + start_coordinate[1]), 'ground')
         
         while self.check_completion_status(maze_cells):
             next_cells = self.next_possible_steps(maze_cells, self.check_array_bounds(cell_location, maze_cells), cell_location)
@@ -176,9 +174,9 @@ class MapGeneration:
                 ######STEP######
                 next_cell = choice(next_cells)
                 
-                current_tile = (odds[cell_location[0]] * self.tile_size, odds[cell_location[1]] * self.tile_size)
-                next_tile = (odds[next_cell[0]] * self.tile_size, odds[next_cell[1]] * self.tile_size)
-                wall_tile = ((odds[next_cell[0]] + (cell_location[0] - next_cell[0])) * self.tile_size, (odds[next_cell[1]] + (cell_location[1] - next_cell[1])) * self.tile_size)
+                current_tile = (odds[cell_location[0]] * self.tile_size + start_coordinate[0], odds[cell_location[1]] * self.tile_size + start_coordinate[1])
+                next_tile = (odds[next_cell[0]] * self.tile_size + start_coordinate[0], odds[next_cell[1]] * self.tile_size + start_coordinate[1])
+                wall_tile = ((odds[next_cell[0]] + (cell_location[0] - next_cell[0])) * self.tile_size + start_coordinate[0], (odds[next_cell[1]] + (cell_location[1] - next_cell[1])) * self.tile_size + start_coordinate[1])
             
                 self.set_tile(tiles_in_maze, current_tile, 'ground')
                 self.set_tile(tiles_in_maze, wall_tile, 'ground')

@@ -5,10 +5,11 @@ from settings import *
 
 class Game:
     def __init__(self):
-        pygame.init()
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         # self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-        self.display = pygame.Surface((SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))
+        self.display = pygame.Surface((SCREEN_WIDTH // 3, SCREEN_HEIGHT // 3))
+
+        # self.display = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption('Demonic Doors')
         self.clock = pygame.time.Clock()
         # self.player = Player()

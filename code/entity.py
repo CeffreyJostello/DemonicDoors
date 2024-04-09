@@ -12,9 +12,6 @@ class Entity:
         self.speed = 1 #sets speed of the player
         self.health = 1
         
-    def __call__(self):
-        pass
-        
     def kill(self):
         self.health = 0
         
@@ -42,8 +39,7 @@ class Entity:
     def generate_hitbox(self):
         return pygame.Rect(self.position[0], self.position[1], self.size[0], self.size[1])
     
-    def tiles_around(self, location:tuple, tilemap:dict) -> dict:
-        
+    def tiles_around(self, location:tuple, tilemap:dict) -> list:
         tiles = [] #stores physics rects in a list to return
         
         grid_postion = ((location[0] // 16) * 16, (location[1] // 16) * 16)
@@ -60,15 +56,16 @@ class Entity:
                 continue
 
         return tiles
-
-    def update_entity(self, tilemap:dict, entity_tiles:dict): #This creates a new image of an anetity to be passed to entities.
+    
         
+    def update_entity(self, tilemap:dict, entity_tiles:dict, offset:tuple): #This creates a new image of an anetity to be passed to entities.
+        self.position[0] -= offset[0]
+        self.position[1] -= offset[1]
         frame_movement = ((self.direction[3] * self.speed) - (self.direction[2] * self.speed), (self.direction[1] * self.speed) - (self.direction[0] * self.speed))
         
         self.position[0] += (self.direction[3] * self.speed) - (self.direction[2] * self.speed)
         
         hitbox = self.generate_hitbox()
-        
         for physics_recangle in self.tiles_around(self.position, tilemap):
             if hitbox.colliderect(physics_recangle):
                 if frame_movement[0] > 0:
@@ -94,8 +91,48 @@ class Entity:
         entity_tiles[coordinate] = {'name':self.name, 'location':(self.position[0], self.position[1])}
 
 
-# class Player(Entity((16, 16), (8, 8), 'player')):
-#     def __init__(self):
-#         super().__init__()
-#         self.health = 10
+class Player(Entity):
+    def __init__(self, position:tuple, size: tuple, name: str):
+        super().__init__(position, size, name)
+        self.health = 10
+        self.max_health = 10
+        
+        print('Size:', self.size)
+        print('Player Postion:', self.position)
+        
+    def get_player_position(self):
+        return (self.position[0], self.position[1])
     
+    def update_player(self, tilemap:dict, entity_tiles:dict, offset):
+        
+        frame_movement = ((self.direction[3] * self.speed) - (self.direction[2] * self.speed), (self.direction[1] * self.speed) - (self.direction[0] * self.speed))
+        
+        self.position[0] += (self.direction[3] * self.speed) - (self.direction[2] * self.speed)
+        
+        hitbox = self.generate_hitbox()
+        
+        
+        
+        for physics_recangle in self.tiles_around(self.position, tilemap):
+            if hitbox.colliderect(physics_recangle):
+                if frame_movement[0] > 0:
+                    hitbox.right = physics_recangle.left
+                if frame_movement[0] < 0:
+                    hitbox.left = physics_recangle.right
+                self.position[0] =  hitbox.x
+                
+        self.position[1] += (self.direction[1] * self.speed) - (self.direction[0] * self.speed)
+        
+        hitbox = self.generate_hitbox()
+        for physics_rectangle in self.tiles_around(self.position, tilemap):
+            if hitbox.colliderect(physics_rectangle):
+                if frame_movement[1] > 0:
+                    hitbox.bottom = physics_rectangle.top
+                if frame_movement[1] < 0:
+                    hitbox.top = physics_rectangle.bottom
+                self.position[1] = hitbox.y
+                
+        
+        coordinate = str(self.position[0]) + ';' + str(self.position[1])
+        
+        entity_tiles[coordinate] = {'name':self.name, 'location':(self.position[0] + offset[0], self.position[1] + offset[1])}
