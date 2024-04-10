@@ -16,6 +16,14 @@ class MapGeneration:
         self.tiles = {}
 
     def get_corner(self, coordinate:tuple) -> tuple:
+        """_summary_
+            Returns the top left corner of a tile given any coordinate within a tile.
+        Args:
+            coordinate (tuple): Any coordinate within a tile.
+
+        Returns:
+            tuple: Top left corner of the tile.
+        """
         
         return  (self.tile_size * (coordinate[0] // self.tile_size), self.tile_size * (coordinate[1] // self.tile_size))
         
@@ -191,7 +199,6 @@ class MapGeneration:
                 ######BACKTRACK######
                 cell_location = list(visited_cells.pop())
         self.tiles.update(tiles_in_maze)
-        
     def clear_tile_map(self):
         self.tiles = {}
         

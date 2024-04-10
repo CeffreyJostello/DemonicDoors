@@ -25,7 +25,7 @@ class Entities:
 
             entity.update_entity(tilemap, self.entity_tiles, offset)
             
-            if entity.is_dead() == True:
+            if entity.is_dead():
                 self.entities_in_game.remove(entity)
                 
         self.player.update_player(tilemap, self.entity_tiles, offset)
@@ -37,22 +37,35 @@ class Crosshair:
     def __init__(self):
         self.name = 'aimer'
         pygame.mouse.set_visible(False)
+        
+        pygame.mouse.set_pos((SCREEN_WIDTH // 3 // 2, SCREEN_HEIGHT // 3 // 2))
 
     def set_crosshair(self, name:str): #sets crosshair image.
         self.name = name
-
+        
+    def generate_hitbox(self, position:tuple):
+        return pygame.Rect(position[0], position[1], 5, 5)
+    
     def set_mous_position(self, postion:tuple):
+        
         pygame.mouse.set_pos(postion)
+        
 
     def update(self):
-        position = pygame.mouse.get_pos()
-        string_position = str(position[0]) + ';' + str(position[1])
-        return {string_position : {'name':self.name, 'location':position}}
+            # print("Y postion changed", self.current_position)
+        current_position = pygame.mouse.get_pos()
+        string_position = str(current_position[0]) + ';' + str(current_position[1])
+        return {string_position : {'name':self.name, 'location':current_position}}
     
     
 class Menu():
     def __init__(self):
         pass
+    def open_menu(self):
+        pass
+    def close_menu(self):
+        pass
+    
 
 class Frame:
     """
@@ -63,12 +76,14 @@ class Frame:
         
         self.tilemap = levels.level_1()
         self.tiles_to_render = {}
-        self.crosshair = Crosshair()
         
+        self.crosshair = Crosshair()
+        self.open_menu = False
+        self.menu = Menu()
         self.entities = Entities()
         
-        self.crosshair.set_mous_position((SCREEN_WIDTH //2, SCREEN_HEIGHT //2))
         self.offset = [0, 0]
+        self.player_position = [0, 0]
         self.menu = Menu()
         
         self.render_order = ['backround', 'entity', 'crosshair'] #{'backround', 'water', 'floor', 'trap', 'decor', 'wall', 'entity', 'effect', 'particles', 'crosshair'}
@@ -88,34 +103,41 @@ class Frame:
     def offset_tiles(self, offset:list):
         for coordinate_index in self.tilemap:
             coordinate = list_coordinate(coordinate_index)
-            coordinate[0] += int(offset[0])
-            coordinate[1] += int(offset[1])
+            coordinate[0] += offset[0]
+            coordinate[1] += offset[1]
             self.tilemap[coordinate_index]['location'] = tuple(coordinate)
 
-    def get_screen_center(self, player_position:tuple) -> tuple:
-        player_position = self.entities.player.get_player_position()
-        mouse_position =  pygame.mouse.get_pos()
-        screen_center = (mouse_position[0] - player_position[0], mouse_position[1] - player_position[1])
-        return screen_center
+    # def get_screen_center(self, surface) -> tuple:
+    #     mouse_postion = pygame.mouse.get_pos()
+    #     # screen_center = ((((self.entities.player.generate_hitbox().centerx - surface.get_height() / 2 - self.offset[0]) / 10) ** 2 + (mouse_postion[0] / 30) ** 2) ** 0.5 / 2, (((self.entities.player.generate_hitbox().centery - surface.get_height() / 2 - self.offset[1]) / 10) ** 2 + (mouse_postion[1] / 30) ** 2) ** 0.5 / 2) 
+    #     screen_center = (((self.entities.player.generate_hitbox().centerx - surface.get_width() / 2 - self.offset[0]) / 20) + mouse_postion[0] / 40, ((self.entities.player.generate_hitbox().centery - surface.get_height() / 2 - self.offset[1]) / 20) + mouse_postion[1] / 40)
+    #     return screen_center
     
+    def get_player_position(self, surface):
+        return ((self.entities.player.generate_hitbox().centerx - surface.get_width() / 2 - self.offset[0]) / 20, (self.entities.player.generate_hitbox().centery - surface.get_height() / 2 - self.offset[1]) / 20)
+         
+
+        
     def update(self, surface):
         
         self.tiles_to_render = {} #resets what tiles have to be rendered every fram for movement
+        screen_center = self.get_player_position(surface)
         
-        screen_center = ((self.entities.player.generate_hitbox().centerx - surface.get_width() / 2 - self.offset[0]) / 20, (self.entities.player.generate_hitbox().centery - surface.get_height() / 2 - self.offset[1]) / 20)
         self.offset[0] = round(- screen_center[0] * 10)
         self.offset[1] = round(- screen_center[1] * 10)
-        
         #####OFFSET#####
-        print('Offset:', self.offset)
+        # print('Offset:', self.offset)
         self.offset_tiles(self.offset)
         #####UPDATE ENTITIES#####
         # print('First tile in map:', self.tilemap.items()[0])
         self.tiles_to_render['backround'] = self.tilemap
-        self.tiles_to_render['crosshair'] = self.crosshair.update()
         self.tiles_to_render['entity'] = self.entities.update(self.tilemap, tuple(self.offset))
-
-
+        self.tiles_to_render['crosshair'] = self.crosshair.update()
+        
+        if self.open_menu:
+            pass
+        else:
+            pass
 
     def render(self, surface):
         

@@ -1,7 +1,7 @@
 from typing import Any
 from settings import *
 import pygame
-
+from utilities import list_coordinate
 class Entity:
     def __init__(self, position:tuple, size:tuple, name:str):
         self.name = name #name of the entity for blitting purposes
@@ -10,7 +10,7 @@ class Entity:
         self.size = size #pixel size of the entity
         self.direction = [False, False, False, False] #up down left right
         self.speed = 1 #sets speed of the player
-        self.health = 1
+        self.health = 1 #default health of 1 for an entity
         
     def kill(self):
         self.health = 0
@@ -59,8 +59,10 @@ class Entity:
     
         
     def update_entity(self, tilemap:dict, entity_tiles:dict, offset:tuple): #This creates a new image of an anetity to be passed to entities.
-        self.position[0] -= offset[0]
-        self.position[1] -= offset[1]
+        
+        self.position[0] = offset[0]
+        self.position[1] = offset[1]
+        
         frame_movement = ((self.direction[3] * self.speed) - (self.direction[2] * self.speed), (self.direction[1] * self.speed) - (self.direction[0] * self.speed))
         
         self.position[0] += (self.direction[3] * self.speed) - (self.direction[2] * self.speed)
@@ -96,6 +98,7 @@ class Player(Entity):
         super().__init__(position, size, name)
         self.health = 10
         self.max_health = 10
+        self.speed = 5
         
         print('Size:', self.size)
         print('Player Postion:', self.position)
