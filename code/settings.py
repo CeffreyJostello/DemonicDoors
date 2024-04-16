@@ -15,6 +15,9 @@ physics_tile = {
     'wall',
     'aqua_tile'
 }
+directional_tile = {
+    'aqua_tile'
+}
 items = {
 
 }

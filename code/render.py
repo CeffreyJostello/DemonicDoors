@@ -87,7 +87,7 @@ class Frame:
         self.assets = { #images that have to be loaded per blit of an image
             'player': load_image('sprites/entities/johny/BillyBob.png'),
             'wall' : load_image('sprites/tiles/aqua_tile/29.png'),
-            'ground' : load_image('sprites/tiles/ground.png'),
+            'ground' : load_image('sprites/tiles/floor.png'),
             'aimer': load_image('sprites/crosshairs/aimer.png')
             # 'aqua_tile': load_images('sprites/tiles/aqual_tile')
         }

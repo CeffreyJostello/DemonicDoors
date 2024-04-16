@@ -36,7 +36,7 @@ def load_images(path:str) -> list:
 def tuple_coordinate(tile_coordinate:str) -> tuple:
     return tuple([int(coord) for coord in tile_coordinate.split(';')])
 
-def list_coordinate(tile_coordinate:str) -> tuple:
+def list_coordinate(tile_coordinate:str) -> list:
     return [int(coord) for coord in tile_coordinate.split(';')]
 
 def string_coordinate(tile_coordinate:tuple) -> str:

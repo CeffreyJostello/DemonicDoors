@@ -1,7 +1,7 @@
 import pygame
 from random import choice
 from utilities import *
-from settings import DIRECTIONS
+from settings import *
 class Tiles:
     """_summary_ 
     This class is to establish individual objects for tiles and cells.
@@ -203,12 +203,22 @@ class MapGeneration:
         
     def process_tiles(self):
         
-        for string_coordinate, tile_data in self.tiles.item():
-            tile_name = self.tiles[tile_data]['name']
-            direction_map = {(-1, -1):True, (0, -1):True, (1, -1):True, (-1, 0):True, (1, 0):True, (-1, 1):True, (0, 1):True, (1, 1):True}
-
-            for directions, state in direction_map.items(): #this prosses 
-                pass
+        for string_coordinate in self.tiles:
+            tile_name = self.tiles[string_coordinate]['name']
+            
+            if tile_name in directional_tile:
+                direction_map = {(-1, -1):True, (0, -1):True, (1, -1):True, (-1, 0):True, (1, 0):True, (-1, 1):True, (0, 1):True, (1, 1):True}
+                current_coordinate = list_coordinate(string_coordinate)
+                for direction, state in direction_map.items(): #this prosses 
+                    prospect_coordinate = current_coordinate[:]
+                    prospect_coordinate[0] = direction[0] * self.tile_size
+                    prospect_coordinate[1] = direction[1] * self.tile_size
+                    prospect_tile_index = string_coordinate(prospect_coordinate)
+                    if prospect_tile_index in self.tiles and self.tiles[prospect_tile_index]['name'] == tile_name:
+                        direction_map[direction] = False
+                    
+                 
+                
             
     def clear_tile_map(self):
         self.tiles = {}
