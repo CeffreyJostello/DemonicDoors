@@ -29,7 +29,8 @@ def load_images(path:str) -> list:
     
     images = []
     for image_name in os.listdir(path):
-        images.append(load_image(path + image_name)) 
+        images.append(load_image(path + image_name))
+         
     return images
 
 def tuple_coordinate(tile_coordinate:str) -> tuple:

@@ -75,24 +75,21 @@ class Frame:
     def __init__(self, levels):
         
         self.tilemap = levels.level_1()
-        self.tiles_to_render = {}
-        
         self.crosshair = Crosshair()
-        self.open_menu = False
         self.menu = Menu()
         self.entities = Entities()
         
+        self.tiles_to_render = {}
+        self.open_menu = False
         self.offset = [0, 0]
-        self.player_position = [0, 0]
-        self.menu = Menu()
-        
-        self.render_order = ['backround', 'entity', 'crosshair'] #{'backround', 'water', 'floor', 'trap', 'decor', 'wall', 'entity', 'effect', 'particles', 'crosshair'}
+        self.render_order = ['tile_map', 'entity', 'crosshair'] #{'backround', 'water', 'floor', 'trap', 'decor', 'wall', 'entity', 'effect', 'particles', 'crosshair'}
         
         self.assets = { #images that have to be loaded per blit of an image
             'player': load_image('sprites/entities/johny/BillyBob.png'),
-            'wall' : load_image('sprites/tiles/wall.png'),
+            'wall' : load_image('sprites/tiles/aqua_tile/29.png'),
             'ground' : load_image('sprites/tiles/ground.png'),
             'aimer': load_image('sprites/crosshairs/aimer.png')
+            # 'aqua_tile': load_images('sprites/tiles/aqual_tile')
         }
 
         
@@ -130,7 +127,7 @@ class Frame:
         self.offset_tiles(self.offset)
         #####UPDATE ENTITIES#####
         # print('First tile in map:', self.tilemap.items()[0])
-        self.tiles_to_render['backround'] = self.tilemap
+        self.tiles_to_render['tile_map'] = self.tilemap
         self.tiles_to_render['entity'] = self.entities.update(self.tilemap, tuple(self.offset))
         self.tiles_to_render['crosshair'] = self.crosshair.update()
         
@@ -145,9 +142,18 @@ class Frame:
         
         
         for order in self.render_order:
+            if order == 'tile_map':
+                
+                for tile in self.tiles_to_render['tile_map']:
+                            
+                    if 'variation' in tile:
+                        surface.blit(surface.blit(self.assets[self.tiles_to_render[order][tile]['name']][int(self.tiles_to_render[order][tile]['variation'])], self.tiles_to_render[order][tile]['location']))
+                        
+                    else:  
+                        surface.blit(self.assets[self.tiles_to_render[order][tile]['name']], self.tiles_to_render[order][tile]['location'])
+            else:
+                for tile in self.tiles_to_render[order]:
 
-            for tiles in self.tiles_to_render[order]:
-
-                surface.blit(self.assets[self.tiles_to_render[order][tiles]['name']], self.tiles_to_render[order][tiles]['location'])
+                    surface.blit(self.assets[self.tiles_to_render[order][tile]['name']], self.tiles_to_render[order][tile]['location'])
 
                 

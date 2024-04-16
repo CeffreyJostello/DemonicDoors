@@ -9,6 +9,8 @@ class Game:
         # self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
         self.display = pygame.Surface((SCREEN_WIDTH // 3, SCREEN_HEIGHT // 3))
         # self.display = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
+        demonic_doors_icon = pygame.image.load('sprites/Icon-1.png')
+        pygame.display.set_icon(demonic_doors_icon)
         pygame.display.set_caption('Demonic Doors')
         self.clock = pygame.time.Clock()
         # self.player = Player()

@@ -1,6 +1,7 @@
 import pygame
 from random import choice
-
+from utilities import *
+from settings import DIRECTIONS
 class Tiles:
     """_summary_ 
     This class is to establish individual objects for tiles and cells.
@@ -199,6 +200,16 @@ class MapGeneration:
                 ######BACKTRACK######
                 cell_location = list(visited_cells.pop())
         self.tiles.update(tiles_in_maze)
+        
+    def process_tiles(self):
+        
+        for string_coordinate, tile_data in self.tiles.item():
+            tile_name = self.tiles[tile_data]['name']
+            direction_map = {(-1, -1):True, (0, -1):True, (1, -1):True, (-1, 0):True, (1, 0):True, (-1, 1):True, (0, 1):True, (1, 1):True}
+
+            for directions, state in direction_map.items(): #this prosses 
+                pass
+            
     def clear_tile_map(self):
         self.tiles = {}
         
