@@ -266,5 +266,20 @@ class MapGeneration:
     def clear_tile_map(self):
         self.tiles = {}
         
+    def debug_map_layout(self):
+        with open('debug/map_layout.txt', 'w') as file:
+            coordinates = [utils.list_coordinate(key) for key in self.tiles]
+            for index in range(1, len(coordinates)):
+                previos_y = coordinates[index-1][1]
+                current_y = coordinates[index][1]
+                if previos_y == current_y:
+                    if self.tiles[utils.string_coordinate(coordinates[index])]['name'] in physics_tile:
+                        file.write('#')
+                    else:
+                        file.write(' ')
+                else:
+                    file.write('\n')
+                
+                
     def get_tile_map(self):
         return self.tiles

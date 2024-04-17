@@ -16,7 +16,13 @@ class Entities:
         self.entities_in_game = []
         print(self.entities_in_game)
         
-        
+    def offset_tiles(self, offset:list, storage):
+        for coordinate_index in storage:
+            coordinate = list_coordinate(coordinate_index)
+            coordinate[0] += offset[0]
+            coordinate[1] += offset[1]
+            storage[coordinate_index]['location'] = tuple(coordinate)
+    
     def update(self, tilemap:dict, offset): #returns
         
         self.entity_tiles = {}
@@ -96,12 +102,12 @@ class Frame:
             json.dump(self.tilemap, tilemap_file)
 
     
-    def offset_tiles(self, offset:list):
-        for coordinate_index in self.tilemap:
+    def offset_tiles(self, offset:list, storage):
+        for coordinate_index in storage:
             coordinate = list_coordinate(coordinate_index)
             coordinate[0] += offset[0]
             coordinate[1] += offset[1]
-            self.tilemap[coordinate_index]['location'] = tuple(coordinate)
+            storage[coordinate_index]['location'] = tuple(coordinate)
 
     # def get_screen_center(self, surface) -> tuple:
     #     mouse_postion = pygame.mouse.get_pos()
@@ -123,7 +129,7 @@ class Frame:
         self.offset[1] = round(- screen_center[1] * 10)
         #####OFFSET#####
         # print('Offset:', self.offset)
-        self.offset_tiles(self.offset)
+        self.offset_tiles(self.offset, self.tilemap)
         #####UPDATE ENTITIES#####
         # print('First tile in map:', self.tilemap.items()[0])
         self.tiles_to_render['tile_map'] = self.tilemap
@@ -139,27 +145,16 @@ class Frame:
         
         self.update(surface)
         
-        print('****')
         for order in self.render_order:
-            print('Rendered:', order)
             if order == 'tile_map':
                 for string_coordinate in self.tiles_to_render['tile_map']:
                     if self.tiles_to_render['tile_map'][string_coordinate]['name'] in directional_tile:
-                        try:
-                            surface.blit(self.assets[self.tiles_to_render[order][string_coordinate]['name']][int(self.tiles_to_render[order][string_coordinate]['variant'])], self.tiles_to_render[order][string_coordinate]['location'])
-                        except:
-                            pass
+                        surface.blit(self.assets[self.tiles_to_render[order][string_coordinate]['name']][int(self.tiles_to_render[order][string_coordinate]['variant'])], self.tiles_to_render[order][string_coordinate]['location'])
 
                     else:
-                        try:
-                            surface.blit(self.assets[self.tiles_to_render[order][string_coordinate]['name']], self.tiles_to_render[order][string_coordinate]['location'])
-                        except:
-                            pass
+                        surface.blit(self.assets[self.tiles_to_render[order][string_coordinate]['name']], self.tiles_to_render[order][string_coordinate]['location'])
             else:
                 for string_coordinate in self.tiles_to_render[order]:
-                    try:
-                        surface.blit(self.assets[self.tiles_to_render[order][string_coordinate]['name']], self.tiles_to_render[order][string_coordinate]['location'])
-                    except:
-                        pass
+                    surface.blit(self.assets[self.tiles_to_render[order][string_coordinate]['name']], self.tiles_to_render[order][string_coordinate]['location'])
 
                 
