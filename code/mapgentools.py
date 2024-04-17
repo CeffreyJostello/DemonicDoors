@@ -1,6 +1,6 @@
 import pygame
 from random import choice
-from utilities import *
+import utilities as utils
 from settings import *
 class Tiles:
     """_summary_ 
@@ -8,7 +8,7 @@ class Tiles:
     """
     def __init__(self):
         self.cell = {'visited':False}
-        self.wall = {'name':'wall', 'location':(0,0)}
+        self.wall = {'name':'aqua_tile', 'location':(0,0), 'variant':'29'}
 
 class MapGeneration:
     
@@ -173,7 +173,7 @@ class MapGeneration:
                 tiles_in_maze[coordinate] = Tiles().wall
                 tiles_in_maze[coordinate]['location'] = (x_coordinate * self.tile_size + start_coordinates[0], y_coordinate * self.tile_size + start_coordinates[1])
                 
-        self.set_tile(tiles_in_maze, (16 + start_coordinate[0], 16 + start_coordinate[1]), 'ground')
+        self.set_tile(tiles_in_maze, (16 + start_coordinate[0], 16 + start_coordinate[1]), 'aqua_tile')
         
         while self.check_completion_status(maze_cells):
             next_cells = self.next_possible_steps(maze_cells, self.check_array_bounds(cell_location, maze_cells), cell_location)
@@ -202,20 +202,63 @@ class MapGeneration:
         self.tiles.update(tiles_in_maze)
         
     def process_tiles(self):
-        
+        print('Process_tiles being called.')
+        variants = {#True is open and False is taken
+            "00": {(0, -1):True, (-1, 0):True, (1, 0):False,  (0, 1):False, (1, 1):False}, #complete
+            "01": {(0, -1):True, (-1, 0):False, (1, 0):False, (-1, 1):False, (0, 1):False, (1, 1):False}, #complete
+            "02": {(0, -1):True, (-1, 0):False, (1, 0):True, (-1, 1):False, (0, 1):False}, #complete
+            "03": {(-1, -1):True, (0, -1):False, (1, -1):True, (-1, 0):False, (1, 0):False, (-1, 1):True, (0, 1):False, (1, 1):True}, #complete
+            "04": {(0, -1):True, (-1, 0):False, (1, 0):False, (0, 1):True}, #complete
+            "05": {(0, -1):False, (1, -1):True, (-1, 0):True, (1, 0):False, (0, 1):True}, #complete
+            "06": {(-1, -1):True, (0, -1):False, (1, -1):True, (-1, 0):False, (1, 0):True, (0, 1):True}, #complete #complete
+            "07": {(0, -1):False, (1, -1):True, (-1, 0):True, (1, 0):False, (0, 1):False, (1, 1):True}, #complete
+            "08": {(-1, -1):True, (0, -1):False, (-1, 0):False, (1, 0):True, (-1, 1):False, (0, 1):False}, #complete
+            "09": {(-1, -1):False, (0, -1):False, (-1, 0):False, (1, 0):True, (-1, 1):True, (0, 1):False}, #complete
+            "10": {(0, -1):False, (1, -1):False, (-1, 0):True, (1, 0):False, (0, 1):False, (1, 1):False}, #complete
+            "11": {(-1, -1):False, (0, -1):False, (1, -1):False, (-1, 0):False, (1, 0):False, (-1, 1):False, (0, 1):False, (1, 1):False}, #complete
+            "12": {(-1, -1):False, (0, -1):False, (-1, 0):False, (1, 0):True, (-1, 1):False, (0, 1):False}, #complete
+            "13": {(0, -1):True, (-1, 0):False, (1, 0):False, (-1, 1):True, (0, 1):False, (1, 1):True}, #complete
+            "14": {(0, -1):True, (-1, 0):False, (1, 0):True, (0, 1):True}, #complete
+            "15": {(0, -1):True, (-1, 0):True, (1, 0):True, (0, 1):False}, #complete
+            "16": {(0, -1):True, (-1, 0):False, (1, 0):True, (-1, 1):True, (0, 1):False},#complete
+            "17": {(-1, -1):True, (0, -1):False, (-1, 0):False, (1, 0):True, (-1, 1):True, (0, 1):False}, #complete 
+            "18": {(0, -1):False, (1, -1):True, (-1, 0):True, (1, 0):False, (0, 1):False, (1, 1):False}, #complete
+            "19": {(0, -1):False, (1, -1):True, (-1, 0):True, (1, 0):False, (0, 1):False, (1, 1):False}, #complete
+            "20": {(0, -1):False, (1, -1):False, (-1, 0):True, (1, 0):False, (0, 1):True}, #complete
+            "21": {(-1, -1):False, (0, -1):False, (1, -1):False, (-1, 0):False, (1, 0):False, (0, 1):True}, #complete
+            "22": {(-1, -1):False, (0, -1):False, (-1, 0):False, (1, 0):True, (0, 1):True}, #complete
+            "23": {(-1, -1):True, (0, -1):False, (1, -1):True, (-1, 0):False, (1, 0):False, (0, 1):True}, #complete
+            "24": {(0, -1):True, (-1, 0):True, (1, 0):False, (0, 1):True}, #complete
+            "25": {(0, -1):False, (-1, 0):True, (1, 0):True, (0, 1):True}, #complete
+            "26": {(0, -1):True, (-1, 0):True, (1, 0):False, (0, 1):False, (1, 1):True}, #complete
+            "27": {(0, -1):True, (-1, 0):False, (1, 0):False, (-1, 1):False, (0, 1):False, (1, 1):True}, #complete
+            "28": {(0, -1):True, (-1, 0):False, (1, 0):False, (-1, 1):True, (0, 1):False, (1, 1):False}, #complete
+            "29": {(0, -1):True, (-1, 0):True, (1, 0):True, (0, 1):True}, #complete      
+            "30": {(0, -1):False, (-1, 0):True, (1, 0):True, (0, 1):False}
+            
+        }
+
         for string_coordinate in self.tiles:
             tile_name = self.tiles[string_coordinate]['name']
-            
+            # print('String Coord:', string_coordinate)
             if tile_name in directional_tile:
                 direction_map = {(-1, -1):True, (0, -1):True, (1, -1):True, (-1, 0):True, (1, 0):True, (-1, 1):True, (0, 1):True, (1, 1):True}
-                current_coordinate = list_coordinate(string_coordinate)
-                for direction, state in direction_map.items(): #this prosses 
-                    prospect_coordinate = current_coordinate[:]
-                    prospect_coordinate[0] = direction[0] * self.tile_size
-                    prospect_coordinate[1] = direction[1] * self.tile_size
-                    prospect_tile_index = string_coordinate(prospect_coordinate)
+                current_coordinate = utils.list_coordinate(string_coordinate)
+                for direction in direction_map: #this prosses 
+                    prospect_coordinate = current_coordinate[::]
+                    prospect_coordinate[0] += direction[0] * self.tile_size
+                    prospect_coordinate[1] += direction[1] * self.tile_size
+                    prospect_tile_index = utils.string_coordinate(prospect_coordinate)
                     if prospect_tile_index in self.tiles and self.tiles[prospect_tile_index]['name'] == tile_name:
                         direction_map[direction] = False
+                for variant, varient_map in variants.items():
+                    # print("Variant", variant)
+                    # print("Variant Map:", varient_map)
+                    # print("Direction Map:", direction_map)
+                    comparison = {key: direction_map[key] for key in direction_map if key in varient_map}
+                    if comparison == varient_map:
+                        self.tiles[string_coordinate]['variant'] = variant
+                        break
                     
                  
                 

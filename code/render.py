@@ -1,5 +1,5 @@
 from entity import Entity, Player
-from utilities import *
+from utilities import * 
 from settings import *
 import pygame
 import json
@@ -86,10 +86,9 @@ class Frame:
         
         self.assets = { #images that have to be loaded per blit of an image
             'player': load_image('sprites/entities/johny/BillyBob.png'),
-            'wall' : load_image('sprites/tiles/aqua_tile/29.png'),
             'ground' : load_image('sprites/tiles/floor.png'),
-            'aimer': load_image('sprites/crosshairs/aimer.png')
-            # 'aqua_tile': load_images('sprites/tiles/aqual_tile')
+            'aimer': load_image('sprites/crosshairs/aimer.png'),
+            'aqua_tile': load_images('sprites/tiles/aqua_tile/')
         }
 
         
@@ -140,20 +139,27 @@ class Frame:
         
         self.update(surface)
         
-        
+        print('****')
         for order in self.render_order:
+            print('Rendered:', order)
             if order == 'tile_map':
-                
-                for tile in self.tiles_to_render['tile_map']:
-                            
-                    if 'variation' in tile:
-                        surface.blit(surface.blit(self.assets[self.tiles_to_render[order][tile]['name']][int(self.tiles_to_render[order][tile]['variation'])], self.tiles_to_render[order][tile]['location']))
-                        
-                    else:  
-                        surface.blit(self.assets[self.tiles_to_render[order][tile]['name']], self.tiles_to_render[order][tile]['location'])
-            else:
-                for tile in self.tiles_to_render[order]:
+                for string_coordinate in self.tiles_to_render['tile_map']:
+                    if self.tiles_to_render['tile_map'][string_coordinate]['name'] in directional_tile:
+                        try:
+                            surface.blit(self.assets[self.tiles_to_render[order][string_coordinate]['name']][int(self.tiles_to_render[order][string_coordinate]['variant'])], self.tiles_to_render[order][string_coordinate]['location'])
+                        except:
+                            pass
 
-                    surface.blit(self.assets[self.tiles_to_render[order][tile]['name']], self.tiles_to_render[order][tile]['location'])
+                    else:
+                        try:
+                            surface.blit(self.assets[self.tiles_to_render[order][string_coordinate]['name']], self.tiles_to_render[order][string_coordinate]['location'])
+                        except:
+                            pass
+            else:
+                for string_coordinate in self.tiles_to_render[order]:
+                    try:
+                        surface.blit(self.assets[self.tiles_to_render[order][string_coordinate]['name']], self.tiles_to_render[order][string_coordinate]['location'])
+                    except:
+                        pass
 
                 

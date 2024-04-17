@@ -39,7 +39,7 @@ def tuple_coordinate(tile_coordinate:str) -> tuple:
 def list_coordinate(tile_coordinate:str) -> list:
     return [int(coord) for coord in tile_coordinate.split(';')]
 
-def string_coordinate(tile_coordinate:tuple) -> str:
+def string_coordinate(tile_coordinate):
     return str(tile_coordinate[0]) + ';' + str(tile_coordinate[1])
 
 def draw_rect_alpha(surface, color, rect):
