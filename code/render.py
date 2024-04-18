@@ -1,8 +1,9 @@
-from entity import Entity, Player
+from entity import Entity, Player, Roach
 from utilities import * 
 from settings import *
 import pygame
 import json
+import math
 
 class Entities:
     """
@@ -12,16 +13,10 @@ class Entities:
     def __init__(self):
         
         self.entity_tiles = {}
-        self.player = Player((SCREEN_WIDTH // 3 // 2, SCREEN_HEIGHT // 3 // 2), (8, 8), 'player') #initializes player
-        self.entities_in_game = []
+        self.player = Player((SCREEN_WIDTH // 3 // 2, SCREEN_HEIGHT // 3 // 2), (8, 8), 'player') #initializes player\
+        self.entities_in_game = [Roach((16, 128), (8, 8), 'roach'), Roach((16, 128), (8, 8), 'roach'), Roach((16, 128), (8, 8), 'roach')]
         print(self.entities_in_game)
         
-    def offset_tiles(self, offset:list, storage):
-        for coordinate_index in storage:
-            coordinate = list_coordinate(coordinate_index)
-            coordinate[0] += offset[0]
-            coordinate[1] += offset[1]
-            storage[coordinate_index]['location'] = tuple(coordinate)
     
     def update(self, tilemap:dict, offset): #returns
         
@@ -35,6 +30,7 @@ class Entities:
                 self.entities_in_game.remove(entity)
                 
         self.player.update_player(tilemap, self.entity_tiles, offset)
+        
         return self.entity_tiles #return {'x;y':{'name':player, 'location':(x, y)}}
 
 
@@ -91,7 +87,11 @@ class Frame:
         self.render_order = ['tile_map', 'entity', 'crosshair'] #{'backround', 'water', 'floor', 'trap', 'decor', 'wall', 'entity', 'effect', 'particles', 'crosshair'}
         
         self.assets = { #images that have to be loaded per blit of an image
-            'player': load_image('sprites/entities/johny/BillyBob.png'),
+            ##########ENTITIES##########
+            'larry': load_image('sprites/Green_man.png'),
+            'player':load_image('sprites/entities/roach/roach.png'),
+            'roach': load_image('sprites/entities/roach/roach.png'),
+            ##########TILES##########
             'ground' : load_image('sprites/tiles/floor.png'),
             'aimer': load_image('sprites/crosshairs/aimer.png'),
             'aqua_tile': load_images('sprites/tiles/aqua_tile/')
@@ -121,14 +121,22 @@ class Frame:
 
         
     def update(self, surface):
-        
         self.tiles_to_render = {} #resets what tiles have to be rendered every fram for movement
         screen_center = self.get_player_position(surface)
-        
         self.offset[0] = round(- screen_center[0] * 10)
         self.offset[1] = round(- screen_center[1] * 10)
         #####OFFSET#####
-        # print('Offset:', self.offset)
+        player_x_position, player_y_position = (SCREEN_WIDTH // 3 // 2, SCREEN_HEIGHT // 3 // 2)
+        mouse_position = pygame.mouse.get_pos()
+        # print(mouse_position)
+        if float(mouse_position[0] - player_x_position) == 0:
+            angle = 0
+        else:
+            
+            ratio = float(mouse_position[1] - player_y_position) // float(mouse_position[0] - player_x_position)
+            # print("Ratio:", ratio)
+            angle = math.degrees(math.atan(ratio))
+        print(angle)
         self.offset_tiles(self.offset, self.tilemap)
         #####UPDATE ENTITIES#####
         # print('First tile in map:', self.tilemap.items()[0])

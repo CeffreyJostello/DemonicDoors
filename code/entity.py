@@ -1,7 +1,8 @@
 from typing import Any
 from settings import *
 import pygame
-from utilities import list_coordinate
+from utilities import *
+import random
 class Entity:
     def __init__(self, position:tuple, size:tuple, name:str):
         self.name = name #name of the entity for blitting purposes
@@ -60,8 +61,6 @@ class Entity:
         
     def update_entity(self, tilemap:dict, entity_tiles:dict, offset:tuple): #This creates a new image of an anetity to be passed to entities.
         
-        self.position[0] = offset[0]
-        self.position[1] = offset[1]
         
         frame_movement = ((self.direction[3] * self.speed) - (self.direction[2] * self.speed), (self.direction[1] * self.speed) - (self.direction[0] * self.speed))
         
@@ -87,10 +86,9 @@ class Entity:
                     hitbox.top = physics_rectangle.bottom
                 self.position[1] = hitbox.y
                 
-
-        coordinate = str(self.position[0]) + ';' + str(self.position[1])
+        coordinate = string_coordinate(self.position)
         
-        entity_tiles[coordinate] = {'name':self.name, 'location':(self.position[0], self.position[1])}
+        entity_tiles[coordinate] = {'name':self.name, 'location':(self.position[0] + offset[0], self.position[1] + offset[1])}
 
 
 class Player(Entity):
@@ -99,12 +97,13 @@ class Player(Entity):
         self.health = 10
         self.max_health = 10
         self.speed = 5
-        
+        self.direction = [False, False, False, False]
         print('Size:', self.size)
         print('Player Postion:', self.position)
         
     def get_player_position(self):
         return (self.position[0], self.position[1])
+    
     
     def update_player(self, tilemap:dict, entity_tiles:dict, offset):
         
@@ -127,6 +126,7 @@ class Player(Entity):
         self.position[1] += (self.direction[1] * self.speed) - (self.direction[0] * self.speed)
         
         hitbox = self.generate_hitbox()
+        
         for physics_rectangle in self.tiles_around(self.position, tilemap):
             if hitbox.colliderect(physics_rectangle):
                 if frame_movement[1] > 0:
@@ -136,6 +136,43 @@ class Player(Entity):
                 self.position[1] = hitbox.y
                 
         
-        coordinate = str(self.position[0]) + ';' + str(self.position[1])
+        coordinate = string_coordinate(self.position)
+        
+        entity_tiles[coordinate] = {'name':self.name, 'location':(self.position[0] + offset[0], self.position[1] + offset[1])}
+        
+class Roach(Entity):
+    def __init__(self, position:tuple, size: tuple, name:str):
+        super().__init__(position, size, name='player')
+        self.speed = random.randint(2, 5)
+
+    def update_entity(self, tilemap:dict, entity_tiles:dict, offset:tuple): #This creates a new image of an anetity to be passed to entities.
+        
+        random_number = random.randint(0,3)
+        self.direction[random_number] = not self.direction[random_number]
+        frame_movement = ((self.direction[3] * self.speed) - (self.direction[2] * self.speed), (self.direction[1] * self.speed) - (self.direction[0] * self.speed))
+        
+        self.position[0] += (self.direction[3] * self.speed) - (self.direction[2] * self.speed)
+        
+        hitbox = self.generate_hitbox()
+        for physics_recangle in self.tiles_around(self.position, tilemap):
+            if hitbox.colliderect(physics_recangle):
+                if frame_movement[0] > 0:
+                    hitbox.right = physics_recangle.left
+                if frame_movement[0] < 0:
+                    hitbox.left = physics_recangle.right
+                self.position[0] =  hitbox.x
+                
+        self.position[1] += (self.direction[1] * self.speed) - (self.direction[0] * self.speed)
+        
+        hitbox = self.generate_hitbox()
+        for physics_rectangle in self.tiles_around(self.position, tilemap):
+            if hitbox.colliderect(physics_rectangle):
+                if frame_movement[1] > 0:
+                    hitbox.bottom = physics_rectangle.top
+                if frame_movement[1] < 0:
+                    hitbox.top = physics_rectangle.bottom
+                self.position[1] = hitbox.y
+                
+        coordinate = string_coordinate(self.position)
         
         entity_tiles[coordinate] = {'name':self.name, 'location':(self.position[0] + offset[0], self.position[1] + offset[1])}

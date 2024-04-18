@@ -8,7 +8,7 @@ class Tiles:
     """
     def __init__(self):
         self.cell = {'visited':False}
-        self.wall = {'name':'aqua_tile', 'location':(0,0), 'variant':'29'}
+        self.wall = {'name':'aqua_tile', 'location':(0,0)}
 
 class MapGeneration:
     
@@ -39,6 +39,7 @@ class MapGeneration:
                     line += 'o '
             line += '\n'
         return line
+    
     def check_completion_status(self, cell_array:list) -> bool:
         """_summary_
             Checks if all cells are visited.
@@ -62,7 +63,7 @@ class MapGeneration:
                     continue
         return False
     
-    def set_tile(self, tile_map:dict, location:tuple, tile_name:str):
+    def set_tile(self, tile_map:dict, location:tuple, tile_name:str, scale=1):
         
         """_summary_
             Set a location in a tilemap to a certain tile.
@@ -71,7 +72,7 @@ class MapGeneration:
             location (tuple): Location of the tile in the tile map i.e. 'x;y'.
             tile_name (str): What tile you want to set it to. Names found in frame in self.assets.
         """
-
+        
         tile_map[str(location[0]) + ';' + str(location[1])]['name'] = tile_name
         
     def sploch(self, radius:int, sploches:int) -> list:
@@ -99,8 +100,7 @@ class MapGeneration:
                 continue
             
         return sploch_points
-            
-            
+                     
     def crater(self, tile_name:str, radius:int, amount:int):
         
         start_points = self.sploch(radius, amount)
@@ -150,8 +150,6 @@ class MapGeneration:
         
         return [[cell_location[0] + direction[0], cell_location[1] + direction[1]] for direction in directions if not maze_cell[cell_location[1] + direction[1]][cell_location[0] + direction[0]]['visited']]
         
-            
-    
     def generate_basic_maze(self, maze_dimensions=(5, 5), start_coordinate=(0, 0), scale=1):    
         
         ######INITIALIZE VARIABLE######
@@ -165,10 +163,9 @@ class MapGeneration:
         print(f'***Generating basic maze with size {maze_dimensions} at {start_coordinate} on the screen.')
         
         ######GENERATE TILES######
-        for y_coordinate in range(maze_dimensions[1] * 2 + 1):
+        for y_coordinate in range((maze_dimensions[1] * 2 + 1) * scale):
             
-            for x_coordinate in range(maze_dimensions[0] * 2 + 1):
-                
+            for x_coordinate in range((maze_dimensions[0] * 2 + 1) * scale):
                 coordinate = str(x_coordinate * self.tile_size + start_coordinates[0]) + ';' + str(y_coordinate * self.tile_size + start_coordinates[1])
                 tiles_in_maze[coordinate] = Tiles().wall
                 tiles_in_maze[coordinate]['location'] = (x_coordinate * self.tile_size + start_coordinates[0], y_coordinate * self.tile_size + start_coordinates[1])
@@ -259,10 +256,7 @@ class MapGeneration:
                     if comparison == varient_map:
                         self.tiles[string_coordinate]['variant'] = variant
                         break
-                    
-                 
-                
-            
+                             
     def clear_tile_map(self):
         self.tiles = {}
         
@@ -279,7 +273,6 @@ class MapGeneration:
                         file.write(' ')
                 else:
                     file.write('\n')
-                
-                
+                             
     def get_tile_map(self):
         return self.tiles
