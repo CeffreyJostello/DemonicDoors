@@ -60,6 +60,13 @@ def draw_polygon_alpha(surface, color, points):
     shape_surf = pygame.Surface(target_rect.size, pygame.SRCALPHA)
     pygame.draw.polygon(shape_surf, color, [(x - min_x, y - min_y) for x, y in points])
     surface.blit(shape_surf, target_rect)
+    
+def blitRotateCenter(surface, image, topleft, angle):
+
+    rotated_image = pygame.transform.rotate(image, angle)
+    new_rect = rotated_image.get_rect(center = image.get_rect(topleft = topleft).center)
+    surface.blit(rotated_image, new_rect)
+    
 def display_text(surface, text, location:tuple):
     
     white = (255, 255, 255)

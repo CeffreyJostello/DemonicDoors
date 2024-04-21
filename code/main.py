@@ -12,6 +12,7 @@ class Game:
         pygame.display.set_caption('Demonic Doors')
         self.clock = pygame.time.Clock()
         # self.player = Player()sw
+        
         self.levels = Levels() #Initalizes tile map
         self.frame = Frame(self.levels)
 
