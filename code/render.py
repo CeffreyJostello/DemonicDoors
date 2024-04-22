@@ -4,6 +4,7 @@ from settings import *
 import pygame
 import json
 import math
+from icecream import ic
 
 class Entities:
     """
@@ -12,11 +13,10 @@ class Entities:
 
     def __init__(self):
         self.entity_tiles = {}
-        self.enemy_bullets = []
-        self.play_bullets = []
-        self.player = Player((SCREEN_WIDTH // 3 // 2, SCREEN_HEIGHT // 3 // 2), (8, 8), 'player') #initializes player\
+        self.enemy_hitbox = []
+        self.player_bullets = []
+        self.player = Player((SCREEN_WIDTH // 3 // 2, SCREEN_HEIGHT // 3 // 2), (7, 18), 'skele-right') #initializes player\
         self.entities_in_game = [Roach((16, 128), (8, 8), 'roach'), Roach((16, 128), (8, 8), 'roach'), Roach((16, 128), (8, 8), 'roach')]
-        print(self.entities_in_game)
         
     
     def update(self, tilemap:dict, offset, target, angle): #returns
@@ -42,15 +42,15 @@ class Crosshair:
         pygame.mouse.set_visible(False)
         pygame.mouse.set_pos((SCREEN_WIDTH // 3 // 2, SCREEN_HEIGHT // 3 // 2))
         self.size = (5, 5)
-
+        
     def set_crosshair(self, name:str, size:tuple): #sets crosshair image.
         self.name = name
+        self.size = size
         
     def generate_hitbox(self, position:tuple):
         return pygame.Rect(position[0], position[1], self.size[0], self.size[1])
     
     def set_mous_position(self, postion:tuple):
-        
         pygame.mouse.set_pos(postion)
         
 
@@ -88,17 +88,25 @@ class Frame:
         self.render_order = ['tile_map', 'entity', 'crosshair'] #{'backround', 'water', 'floor', 'trap', 'decor', 'wall', 'entity', 'effect', 'particles', 'crosshair'}
         
         self.assets = { #images that have to be loaded per blit of an image
+            ##########PLAYER##########
+            'skele-right': load_image('sprites/entities/skele/skele-right.png'),
+            'skele-left': load_image('sprites/entities/skele/skele-left.png'),
+            'skele-right-back': load_image('sprites/Green_man.png'),
+            'skele-left-back': load_image('sprites/Green_man.png'),
             ##########ENTITIES##########
             'larry': load_image('sprites/Green_man.png'),
             'player':load_image('sprites/entities/roach/roach.png'),
             'roach': load_image('sprites/entities/roach/roach.png'),
             ##########TILES##########
             'ground' : load_image('sprites/tiles/floor.png'),
+            'aqua_tile': load_images('sprites/tiles/aqua_tile/'),
+            ##########MISC##########
             'aimer': load_image('sprites/crosshairs/aimer.png'),
-            'aqua_tile': load_images('sprites/tiles/aqua_tile/')
+            'pointer':load_image('sprites/crosshairs/pointer.png')
+            
         }
-
-        
+        self.crosshair.set_crosshair('pointer', (5,5))
+        self.crosshair.set_mous_position((0, 0))
         with open('debug/current_tilemap.json', 'w') as tilemap_file:
             json.dump(self.tilemap, tilemap_file)
 
@@ -122,21 +130,15 @@ class Frame:
     def get_mouse_angle(self):
         player_x_position, player_y_position = (SCREEN_WIDTH // 3 // 2, SCREEN_HEIGHT // 3 // 2)
         mouse_position = pygame.mouse.get_pos()
-        opposite = float(mouse_position[1] - player_y_position)
+        opposite = -float(mouse_position[1] - player_y_position)
         adjacent = float(mouse_position[0] - player_x_position)
-        if opposite < 0:
-            changer = 1
-        else:
-            changer = -1
-        if adjacent < 0:
-            changer2 = -1
-        else:
-            changer2 = 1
-        hypotenuse = changer * changer2 * math.sqrt((float(mouse_position[1] - player_y_position) ** 2) + (float(mouse_position[0] - player_x_position) ** 2))
+        # ic(adjacent, opposite)
+        hypotenuse = math.sqrt((opposite ** 2) + (adjacent ** 2))
 
         
         # angle = math.degrees(math.asin(opposite/hypotenuse))
-        angle = math.degrees(math.acos(adjacent/hypotenuse))
+        
+        angle = ic(math.degrees(math.acos(adjacent/hypotenuse)))
         # angle = -math.degrees(math.acos(adjacent/hypotenuse))
 
         # print("Angle:", angle)
@@ -166,6 +168,7 @@ class Frame:
         self.update(surface)
         
         for order in self.render_order:
+            
             if order == 'tile_map':
                 for string_coordinate in self.tiles_to_render['tile_map']:
                     if self.tiles_to_render['tile_map'][string_coordinate]['name'] in directional_tile:

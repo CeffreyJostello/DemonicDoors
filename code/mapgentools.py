@@ -2,13 +2,16 @@ import pygame
 from random import choice
 import utilities as utils
 from settings import *
+from icecream import ic
 class Tiles:
     """_summary_ 
     This class is to establish individual objects for tiles and cells.
     """
-    def __init__(self):
+    def __init__(self, name=''):
         self.cell = {'visited':False}
-        self.wall = {'name':'aqua_tile', 'location':(0,0)}
+        self.tile = {'name':'aqua_tile', 'location':(0,0), 'variant':'29'}
+        
+        
 
 class MapGeneration:
     
@@ -73,8 +76,67 @@ class MapGeneration:
             tile_name (str): What tile you want to set it to. Names found in frame in self.assets.
         """
         
-        tile_map[str(location[0]) + ';' + str(location[1])]['name'] = tile_name
+        scale_x = 0
+        scale_y = 0
+        for y in range(scale):
+            y_position = y * self.tile_size * scale + location[1] 
+            for x in range(scale):
+                x_position = x * self.tile_size * scale + location[0]
+                
+                tile_map[str(x_position) + ';' + str(y_position)]['name'] = tile_name
+                
+                scale_x += self.tile_size
+                
+            scale_y += self.tile_size
+            
+    def box(self, size:tuple, start_position, scale):
+        for y in range(size[1]):
+            y_position = y * self.tile_size * scale + start_position[1]  
+                      
+            for x in range(size[0]):
+                
+                x_position = x * self.tile_size * scale + start_position[0]
+                
+                coordinate = [x_position, y_position]
+                
+                for yy in range(scale):
+                    coordinate[0] = x_position
+                    for xx in range(scale):
+                        self.tiles[utils.string_coordinate(coordinate)] = Tiles().tile
+
+                        
+                        coordinate[0] += self.tile_size
+                    coordinate[1] += self.tile_size
         
+    def arena(self, size:tuple, start_position=(0, 0), scale=1):
+        self.box(size, start_position, scale)
+        
+        for y in range(size[1] - scale):
+            
+            y_position = y * self.tile_size * scale + start_position[1]
+            
+            for x in range(size[0] - scale):
+                
+                x_position = x * self.tile_size * scale + start_position[0]
+                
+                coordinate = [x_position, y_position]
+                ic(coordinate)
+                
+                for yy in range(scale):
+                    coordinate[0] = x_position
+                    for xx in range(scale):
+                        if x == size[0] - 1 or x == 0:
+                            self.set_tile(self.tiles, (tuple(coordinate)), 'aqua_tile', scale)
+                        elif y == size[1] - 1 or y == 0:
+                            self.set_tile(self.tiles, (tuple(coordinate)), 'aqua_tile', scale)
+                        else:
+                            self.set_tile(self.tiles, (tuple(coordinate)), 'ground', scale)
+
+                        
+                        coordinate[0] += self.tile_size
+                    coordinate[1] += self.tile_size
+
+
     def sploch(self, radius:int, sploches:int) -> list:
         
         sploch_points = []
@@ -167,10 +229,10 @@ class MapGeneration:
             
             for x_coordinate in range((maze_dimensions[0] * 2 + 1) * scale):
                 coordinate = str(x_coordinate * self.tile_size + start_coordinates[0]) + ';' + str(y_coordinate * self.tile_size + start_coordinates[1])
-                tiles_in_maze[coordinate] = Tiles().wall
+                tiles_in_maze[coordinate] = Tiles().tile
                 tiles_in_maze[coordinate]['location'] = (x_coordinate * self.tile_size + start_coordinates[0], y_coordinate * self.tile_size + start_coordinates[1])
                 
-        self.set_tile(tiles_in_maze, (16 + start_coordinate[0], 16 + start_coordinate[1]), 'aqua_tile')
+        self.set_tile(tiles_in_maze, (16 + start_coordinate[0], 16 + start_coordinate[1]), 'aqua_tile', scale)
         
         while self.check_completion_status(maze_cells):
             next_cells = self.next_possible_steps(maze_cells, self.check_array_bounds(cell_location, maze_cells), cell_location)
@@ -184,9 +246,9 @@ class MapGeneration:
                 next_tile = (odds[next_cell[0]] * self.tile_size + start_coordinate[0], odds[next_cell[1]] * self.tile_size + start_coordinate[1])
                 wall_tile = ((odds[next_cell[0]] + (cell_location[0] - next_cell[0])) * self.tile_size + start_coordinate[0], (odds[next_cell[1]] + (cell_location[1] - next_cell[1])) * self.tile_size + start_coordinate[1])
             
-                self.set_tile(tiles_in_maze, current_tile, 'ground')
-                self.set_tile(tiles_in_maze, wall_tile, 'ground')
-                self.set_tile(tiles_in_maze, next_tile, 'ground')
+                self.set_tile(tiles_in_maze, current_tile, 'ground', scale)
+                self.set_tile(tiles_in_maze, wall_tile, 'ground', scale)
+                self.set_tile(tiles_in_maze, next_tile, 'ground', scale)
                 
                 visited_cells.append(tuple(next_cell))
                 cell_location = next_cell

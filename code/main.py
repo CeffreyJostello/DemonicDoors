@@ -38,7 +38,6 @@ class Game:
                     if event.key == pygame.K_ESCAPE:
                         pass
 
-
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_w:
                         self.frame.entities.player.stop('up')

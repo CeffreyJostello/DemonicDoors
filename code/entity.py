@@ -4,7 +4,7 @@ import pygame
 from utilities import *
 import random
 import math
-
+from icecream import ic
 class Entity:
     def __init__(self, position:tuple, size:tuple, name:str):
         self.name = name #name of the entity for blitting purposes
@@ -14,7 +14,7 @@ class Entity:
         self.direction = [False, False, False, False] #up down left right
         self.speed = 1 #sets speed of the player
         self.health = 1 #default health of 1 for an entity
-        
+        ic(self.name, self.position)
     def kill(self):
         self.health = 0
         
@@ -59,6 +59,7 @@ class Entity:
                 continue
 
         return tiles
+    
     
     def ai(self, tilemap:dict, entity_tiles:dict, target:list):
         pass
@@ -134,7 +135,7 @@ class Player(Entity):
         super().__init__(position, size, name)
         self.health = 10
         self.max_health = 10
-        self.speed = 5
+        self.speed = 3
         self.direction = [False, False, False, False]
         print('Size:', self.size)
         print('Player Postion:', self.position)
@@ -146,12 +147,16 @@ class Player(Entity):
             
         }
         
+    
     def get_player_position(self):
         return (self.position[0], self.position[1])
+    
     def update_player(self, tilemap:dict, entity_tiles:dict, offset, angle):
         self.angle = angle
-        if self.action:
-            pass
+        if angle >= 0 and angle <= 90:
+            self.name = 'skele-right'
+        else:
+            self.name = 'skele-left'        
         
         frame_movement = ((self.direction[3] * self.speed) - (self.direction[2] * self.speed), (self.direction[1] * self.speed) - (self.direction[0] * self.speed))
         
