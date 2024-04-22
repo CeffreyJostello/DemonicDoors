@@ -5,6 +5,7 @@ from utilities import *
 import random
 import math
 from icecream import ic
+
 class Entity:
     def __init__(self, position:tuple, size:tuple, name:str):
         self.name = name #name of the entity for blitting purposes
@@ -13,10 +14,15 @@ class Entity:
         self.size = size #pixel size of the entity
         self.direction = [False, False, False, False] #up down left right
         self.speed = 1 #sets speed of the player
-        self.health = 1 #default health of 1 for an entity
+        self.health = 1 #default health of 1 for an entit
+        self.collision_damage = True
         ic(self.name, self.position)
+        
+        
+        
     def kill(self):
         self.health = 0
+    
         
     def damage(self, hp:int):
         self.health -= hp
@@ -39,9 +45,13 @@ class Entity:
         key = {'up':0, 'down':1, 'left':2, 'right':3}
         self.direction[key[direction]] = False
     
-    def generate_hitbox(self, angle=0):
+    def generate_collision_box(self, angle=0):
         return pygame.Rect(self.position[0], self.position[1], self.size[0], self.size[1])
     
+    def generate_hitbox(self, offset):
+        if self.collision_damage:
+            return pygame.Rect(self.position[0] + offset[0], self.position[1] + offset[1], self.size[0], self.size[1])
+        
     def tiles_around(self, location:tuple, tilemap:dict) -> list:
         tiles = [] #stores physics rects in a list to return
         
@@ -72,7 +82,7 @@ class Entity:
         
         self.position[0] += (self.direction[3] * self.speed) - (self.direction[2] * self.speed)
         
-        hitbox = self.generate_hitbox()
+        hitbox = self.generate_collision_box()
         for physics_recangle in self.tiles_around(self.position, tilemap):
             if hitbox.colliderect(physics_recangle):
                 if frame_movement[0] > 0:
@@ -83,7 +93,7 @@ class Entity:
                 
         self.position[1] += (self.direction[1] * self.speed) - (self.direction[0] * self.speed)
         
-        hitbox = self.generate_hitbox()
+        hitbox = self.generate_collision_box()
         for physics_rectangle in self.tiles_around(self.position, tilemap):
             if hitbox.colliderect(physics_rectangle):
                 if frame_movement[1] > 0:
@@ -136,35 +146,36 @@ class Player(Entity):
         self.health = 10
         self.max_health = 10
         self.speed = 3
-        self.direction = [False, False, False, False]
-        print('Size:', self.size)
-        print('Player Postion:', self.position)
+        self.direction = [False, False, False, False]        
         self.action = False
         self.angle = 0
         self.anchor_left = [0, 0] #handle of gun on right hand
         self.anchor_right = [0, 0] #handle of gun on left hand
-        self.inventory = {
-            
-        }
+        # self.spell = Gun(5, 10, 'basic_spell', 'fire_ball')
         
     
     def get_player_position(self):
         return (self.position[0], self.position[1])
     
     def update_player(self, tilemap:dict, entity_tiles:dict, offset, angle):
-        self.angle = angle
         if angle >= 0 and angle <= 90:
-            self.name = 'skele-right'
-        else:
-            self.name = 'skele-left'        
+            self.name = 'skele-right-back'
+        elif angle > 90 and angle <= 180:
+            self.name = 'skele-left-back'     
+        elif angle <= 0 and angle <= -90:
+            self.name = 'skele-left'
+        elif angle > -90 and angle >= -180:
+            self.name = 'skele-right'      
         
+        if self.health <= 0:
+            self.name = 'skele-dead'
+            self.speed = 0
+
         frame_movement = ((self.direction[3] * self.speed) - (self.direction[2] * self.speed), (self.direction[1] * self.speed) - (self.direction[0] * self.speed))
         
         self.position[0] += (self.direction[3] * self.speed) - (self.direction[2] * self.speed)
         
-        hitbox = self.generate_hitbox()
-        
-        
+        hitbox = self.generate_collision_box()
         
         for physics_recangle in self.tiles_around(self.position, tilemap):
             if hitbox.colliderect(physics_recangle):
@@ -176,7 +187,7 @@ class Player(Entity):
                 
         self.position[1] += (self.direction[1] * self.speed) - (self.direction[0] * self.speed)
         
-        hitbox = self.generate_hitbox()
+        hitbox = self.generate_collision_box()
         
         for physics_rectangle in self.tiles_around(self.position, tilemap):
             if hitbox.colliderect(physics_rectangle):
@@ -186,6 +197,7 @@ class Player(Entity):
                     hitbox.top = physics_rectangle.bottom
                 self.position[1] = hitbox.y
                 
+        self.anchor_right = [self.position[0] + offset[0], self.position[1] + offset[1]]
         
         coordinate = string_coordinate(self.position)
         

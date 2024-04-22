@@ -120,7 +120,7 @@ class MapGeneration:
                 x_position = x * self.tile_size * scale + start_position[0]
                 
                 coordinate = [x_position, y_position]
-                ic(coordinate)
+                coordinate
                 
                 for yy in range(scale):
                     coordinate[0] = x_position

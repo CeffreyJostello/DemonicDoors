@@ -67,26 +67,3 @@ def blitRotateCenter(surface, image, topleft, angle):
     new_rect = rotated_image.get_rect(center = image.get_rect(topleft = topleft).center)
     surface.blit(rotated_image, new_rect)
     
-def display_text(surface, text, location:tuple):
-    
-    white = (255, 255, 255)
-    green = (0, 255, 0)
-    blue = (0, 0, 128)
-    
-    # assigning values to X and Y variable
-    x = location[0]
-    y = location[1]
-    # create a font object.
-    # 1st parameter is the font file
-    # which is present in pygame.
-    # 2nd parameter is size of the font
-    font = pygame.font.SysFont('Comic Sans MS', 30)
-    # create a text surface object,
-    # on which text is drawn on it.
-    words = font.render(text, True, green, blue)
-    # create a rectangular object for the
-    # text surface object
-    wordsRect = words.get_rect()
-    # set the center of the rectangular object.
-    wordsRect.center = (x // 2, y // 2)
-    surface.blit(words, wordsRect)

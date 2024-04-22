@@ -1,2 +1,3 @@
-x = (1, 2)
-print(type(list(x)[0]))
+x = [1]
+y = 2
+print(x * y)

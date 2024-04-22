@@ -2,7 +2,6 @@ import pygame, sys
 from render import Frame
 from levels import Levels
 from settings import *
-
 class Game:
     def __init__(self):
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -12,7 +11,6 @@ class Game:
         pygame.display.set_caption('Demonic Doors')
         self.clock = pygame.time.Clock()
         # self.player = Player()sw
-        
         self.levels = Levels() #Initalizes tile map
         self.frame = Frame(self.levels)
 

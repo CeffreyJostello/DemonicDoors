@@ -1,5 +1,5 @@
 from entity import Entity, Player, Roach, Bullet
-from utilities import * 
+from utilities import *
 from settings import *
 import pygame
 import json
@@ -14,22 +14,43 @@ class Entities:
     def __init__(self):
         self.entity_tiles = {}
         self.enemy_hitbox = []
+        self.player_hitbox = []
         self.player_bullets = []
-        self.player = Player((SCREEN_WIDTH // 3 // 2, SCREEN_HEIGHT // 3 // 2), (7, 18), 'skele-right') #initializes player\
-        self.entities_in_game = [Roach((16, 128), (8, 8), 'roach'), Roach((16, 128), (8, 8), 'roach'), Roach((16, 128), (8, 8), 'roach')]
+        self.player = Player((SCREEN_WIDTH // 3 // 2, SCREEN_HEIGHT // 3 // 2), (7, 8), 'skele-right') #initializes player\
+        self.entities_in_game = [Roach((128, 128), (8, 8), 'roach'), Roach((128, 128), (8, 8), 'roach'), Roach((128, 128), (8, 8), 'roach'), Roach((128, 128), (8, 8), 'roach'), Roach((128, 128), (8, 8), 'roach'), Roach((128, 128), (8, 8), 'roach'), Roach((128, 128), (8, 8), 'roach'), Roach((128, 128), (8, 8), 'roach'), Roach((128, 128), (8, 8), 'roach')]
         
     
     def update(self, tilemap:dict, offset, target, angle): #returns
         
         self.entity_tiles = {}
+        self.enemy_hitbox.clear()
+        self.player_hitbox.clear()
         
+
         for entity in self.entities_in_game:
-            
             entity.update_entity(tilemap, self.entity_tiles, offset, target)
+            
+            hitbox = entity.generate_hitbox(offset)
+            self.enemy_hitbox.append(hitbox)
             
             if entity.is_dead():
                 self.entities_in_game.remove(entity)
                 
+        for hitbox in self.enemy_hitbox:
+            player_hitbox = self.player.generate_hitbox(offset)
+            
+            if player_hitbox.colliderect(hitbox):
+                self.player.damage(1)
+                print('Player took a hit')
+                
+        if DEBUG:
+            for entity in self.entities_in_game:
+                debug_hitbox = entity.generate_hitbox(offset)
+                self.enemy_hitbox.append(debug_hitbox)
+            player_hitbox = self.player.generate_hitbox(offset)
+        
+            self.player_hitbox.append(player_hitbox)
+            
         self.player.update_player(tilemap, self.entity_tiles, offset, angle)
         
         return self.entity_tiles #return {'x;y':{'name':player, 'location':(x, y)}}
@@ -91,12 +112,16 @@ class Frame:
             ##########PLAYER##########
             'skele-right': load_image('sprites/entities/skele/skele-right.png'),
             'skele-left': load_image('sprites/entities/skele/skele-left.png'),
-            'skele-right-back': load_image('sprites/Green_man.png'),
-            'skele-left-back': load_image('sprites/Green_man.png'),
+            'skele-dead': load_image('sprites/entities/skele/skele-dead.png'),
+            'skele-right-back': load_image('sprites/entities/skele/skele-right-back.png'),
+            'skele-left-back': load_image('sprites/entities/skele/skele-left-back.png'),
             ##########ENTITIES##########
             'larry': load_image('sprites/Green_man.png'),
             'player':load_image('sprites/entities/roach/roach.png'),
             'roach': load_image('sprites/entities/roach/roach.png'),
+            ##########WEAPONS##########
+            'basic_spell':load_image('sprites/weapons/basic_spell.png'),
+            'fire_ball':load_image('sprites/weapons/fire_ball.png'),
             ##########TILES##########
             'ground' : load_image('sprites/tiles/floor.png'),
             'aqua_tile': load_images('sprites/tiles/aqua_tile/'),
@@ -125,20 +150,23 @@ class Frame:
     #     return screen_center
     
     def get_player_position(self, surface):
-        return ((self.entities.player.generate_hitbox().centerx - surface.get_width() / 2 - self.offset[0]) / 20, (self.entities.player.generate_hitbox().centery - surface.get_height() / 2 - self.offset[1]) / 20)
+        return ((self.entities.player.generate_collision_box().centerx - surface.get_width() / 2 - self.offset[0]) / 20, (self.entities.player.generate_collision_box().centery - surface.get_height() / 2 - self.offset[1]) / 20)
     
     def get_mouse_angle(self):
         player_x_position, player_y_position = (SCREEN_WIDTH // 3 // 2, SCREEN_HEIGHT // 3 // 2)
         mouse_position = pygame.mouse.get_pos()
+        
         opposite = -float(mouse_position[1] - player_y_position)
         adjacent = float(mouse_position[0] - player_x_position)
+        change1 = -1 if opposite < 0 else 1
+        
         # ic(adjacent, opposite)
-        hypotenuse = math.sqrt((opposite ** 2) + (adjacent ** 2))
+        hypotenuse =  math.sqrt((opposite ** 2) + (adjacent ** 2))
 
         
         # angle = math.degrees(math.asin(opposite/hypotenuse))
         
-        angle = ic(math.degrees(math.acos(adjacent/hypotenuse)))
+        angle = change1 * math.degrees(math.acos((adjacent/hypotenuse)))
         # angle = -math.degrees(math.acos(adjacent/hypotenuse))
 
         # print("Angle:", angle)
@@ -187,5 +215,10 @@ class Frame:
                         blitRotateCenter(surface, image, location, angle)
                     else:
                         surface.blit(image, location)
-           
+        if DEBUG:
+            for hitbox in self.entities.enemy_hitbox:
+                
+                draw_rect_alpha(surface, (255, 0, 0, 100), hitbox)
+            draw_rect_alpha(surface, (0, 255, 0, 100), self.entities.player_hitbox[0])
+            
                 
