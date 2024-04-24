@@ -158,6 +158,7 @@ class Player(Entity):
         return (self.position[0], self.position[1])
     
     def update_player(self, tilemap:dict, entity_tiles:dict, offset, angle):
+        
         if angle >= 0 and angle <= 90:
             self.name = 'skele-right-back'
         elif angle > 90 and angle <= 180:

@@ -77,20 +77,25 @@ class MapGeneration:
             tile_name (str): What tile you want to set it to. Names found in frame in self.assets.
         """
         
-        scale_x = 0
-        scale_y = 0
-        for y in range(scale):
-            y_position = y * self.tile_size * scale + location[1] 
-            for x in range(scale):
-                x_position = x * self.tile_size * scale + location[0]
+
+        coordinate = list(location)
+        x_position = coordinate[0]
+        y_position = coordinate[1]
+        for yy in range(scale):
+            x_position = coordinate[0]
+            for xx in range(scale):
                 try:
-                    
                     tile_map[str(x_position) + ';' + str(y_position)]['name'] = tile_name
-                except KeyError:
-                    print('KeyError')
-                scale_x += self.tile_size
+                except:
+                    print("key eror")
                 
-            scale_y += self.tile_size
+                x_position += self.tile_size
+            y_position += self.tile_size
+            
+
+
+
+        
             
     def box(self, size:tuple, start_position, scale):
         for y in range(size[1]):
@@ -223,14 +228,15 @@ class MapGeneration:
         cell_location = [0, 0] #cell index for fds
         visited_cells = [(0, 0)] #Visited cells for back tracking
         maze_cells = [[Tiles().cell for x in range(maze_dimensions[0])] for y in range(maze_dimensions[1])] #creates cell objects
+        
         odds = [odd for odd in range(max([maze_dimensions[0], maze_dimensions[1]]) * 2) if odd % 2] #Used to establish cell pattern in tiles
         maze_cells[cell_location[1]][cell_location[0]]['visited'] = True 
         print(f'***Generating basic maze with size {maze_dimensions} at {start_coordinate} on the screen.')
         
         ######GENERATE TILES######
-        ic(self.box((maze_dimensions[0], maze_dimensions[1]), start_coordinate, scale))                
-                
-                
+        
+        print(len(self.tiles))   
+        self.box((maze_dimensions[0] * scale + 1, maze_dimensions[1] * scale + 1), start_coordinate, scale)        
         self.set_tile(self.tiles, (self.tile_size * scale + start_coordinate[0], self.tile_size * scale + start_coordinate[1]), 'aqua_tile', scale)
         
         
@@ -244,9 +250,9 @@ class MapGeneration:
                 ######STEP######
                 next_cell = choice(next_cells)
                 
-                current_tile = (odds[cell_location[0]] * self.tile_size + start_coordinate[0], odds[cell_location[1]] * self.tile_size + start_coordinate[1])
-                next_tile = (odds[next_cell[0]] * self.tile_size + start_coordinate[0], odds[next_cell[1]] * self.tile_size + start_coordinate[1])
-                wall_tile = ((odds[next_cell[0]] + (cell_location[0] - next_cell[0])) * self.tile_size + start_coordinate[0], (odds[next_cell[1]] + (cell_location[1] - next_cell[1])) * self.tile_size + start_coordinate[1])
+                current_tile = (odds[cell_location[0]] * self.tile_size * scale + start_coordinate[0], odds[cell_location[1]] * self.tile_size * scale + start_coordinate[1])
+                next_tile = (odds[next_cell[0]] * self.tile_size * scale + start_coordinate[0], odds[next_cell[1]] * self.tile_size * scale + start_coordinate[1])
+                wall_tile = ((odds[next_cell[0]] + (cell_location[0] - next_cell[0])) * self.tile_size * scale + start_coordinate[0], (odds[next_cell[1]] + (cell_location[1] - next_cell[1])) * self.tile_size * scale + start_coordinate[1])
             
                 self.set_tile(self.tiles, current_tile, 'ground', scale)
                 self.set_tile(self.tiles, wall_tile, 'ground', scale)
@@ -260,7 +266,7 @@ class MapGeneration:
                 
                 ######BACKTRACK######
                 cell_location = list(visited_cells.pop())
-        
+                
     def process_tiles(self):
         print('Process_tiles being called.')
         variants = {#True is open and False is taken
