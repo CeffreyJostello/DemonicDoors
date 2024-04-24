@@ -207,7 +207,8 @@ class Player(Entity):
 class Roach(Entity):
     def __init__(self, position:tuple, size: tuple, name:str):
         super().__init__(position, size, name='player')
-        self.speed = random.randint(2, 5)
+        # self.speed = random.randint(2, 5)
+        self.speed = 12
         
     def ai(self, tilemap:dict, entity_tiles:dict, target:list):
         random_number = random.randint(0,3)

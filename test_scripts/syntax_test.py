@@ -1,3 +1,2 @@
-x = [1]
-y = 2
-print(x * y)
+text = input()
+print("hell0:", text)

@@ -8,3 +8,4 @@ This is demonic doors.
 - Automatic Maze Generation
 - Rendering Order
 - Added Aqua Tiles
+- Added Arena Mapgen tool

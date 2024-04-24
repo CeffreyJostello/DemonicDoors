@@ -130,7 +130,6 @@ class Frame:
             'pointer':load_image('sprites/crosshairs/pointer.png')
             
         }
-        self.crosshair.set_crosshair('pointer', (5,5))
         self.crosshair.set_mous_position((0, 0))
         with open('debug/current_tilemap.json', 'w') as tilemap_file:
             json.dump(self.tilemap, tilemap_file)
