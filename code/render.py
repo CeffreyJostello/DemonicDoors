@@ -94,16 +94,16 @@ class Menu():
     
 
 class Frame:
-    """
-    The fram object handles all tiles in the game and decides which tiles get rendered to the frame.
+    """_summary_
+    Handles every frame.
     """
     
     def __init__(self, levels):
         
         self.tilemap = levels.level_1()
-        self.crosshair = Crosshair()
-        self.menu = Menu()
-        self.entities = Entities()
+        self.crosshair = Crosshair() #Crosshair handling class
+        self.menu = Menu() 
+        self.entities = Entities() #Entity handling class
         
         self.tiles_to_render = {}
         self.open_menu = False
@@ -138,6 +138,7 @@ class Frame:
 
     
     def offset_tiles(self, offset:list, storage):
+
         for coordinate_index in storage:
             coordinate = list_coordinate(coordinate_index)
             coordinate[0] += offset[0]
@@ -175,17 +176,15 @@ class Frame:
     
         
     def update(self, surface):
-        self.tiles_to_render = {} #resets what tiles have to be rendered every fram for movement
+        self.tiles_to_render = {} #resets what tiles have to be rendered every frame for movement
         screen_center = self.get_player_position(surface)
         self.offset[0] = round(- screen_center[0] * 10)
         self.offset[1] = round(- screen_center[1] * 10)
         #####OFFSET#####
         self.offset_tiles(self.offset, self.tilemap)
         #####UPDATE ENTITIES#####
-        # print('First tile in map:', self.tilemap.items()[0])
         self.tiles_to_render['tile_map'] = self.tilemap
         self.tiles_to_render['entity'] = self.entities.update(self.tilemap, tuple(self.offset), screen_center, self.get_mouse_angle())
-        # self.tiles_to_render['weapon'] = self.entities.get_weapon_tiles
         self.tiles_to_render['crosshair'] = self.crosshair.update()
         if self.open_menu:
             pass
@@ -193,7 +192,11 @@ class Frame:
             pass
 
     def render(self, surface):
-        
+        """_summary_
+        This is responsible for pasting images to the screen every frame.
+        Args:
+            surface (_type_): This is the screen or place where the images are to be blitted.
+        """
         self.update(surface)
         
         for order in self.render_order:
