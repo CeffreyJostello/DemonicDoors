@@ -128,6 +128,7 @@ class Bullet(Entity):
     
 class Gun:
     def __init__(self, damage, speed, gun_image_name, bullet_image_name):
+        self.bullet = [] #container for bullet images
         self.damage = damage
         self.speed = speed
         self.image_gun = gun_image_name
@@ -202,14 +203,15 @@ class Player(Entity):
         
         coordinate = string_coordinate(self.position)
         
+        
         entity_tiles[coordinate] = {'name':self.name, 'location':(self.position[0] + offset[0], self.position[1] + offset[1]), 'angle':0}
 
 
 class Roach(Entity):
     def __init__(self, position:tuple, size: tuple, name:str):
         super().__init__(position, size, name='player')
-        # self.speed = random.randint(2, 5)
-        self.speed = 12
+        
+        self.speed = random.randint(2, 5)
         
     def ai(self, tilemap:dict, entity_tiles:dict, target:list):
         random_number = random.randint(0,3)

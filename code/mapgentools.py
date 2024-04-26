@@ -120,11 +120,11 @@ class MapGeneration:
     def arena(self, size:tuple, start_position=(0, 0), scale=1):
         self.box(size, start_position, scale)
         
-        for y in range(size[1] - scale):
+        for y in range(size[1]):
             
             y_position = y * self.tile_size * scale + start_position[1]
             
-            for x in range(size[0] - scale):
+            for x in range(size[0]):
                 
                 x_position = x * self.tile_size * scale + start_position[0]
                 
@@ -228,18 +228,15 @@ class MapGeneration:
         cell_location = [0, 0] #cell index for fds
         visited_cells = [(0, 0)] #Visited cells for back tracking
         maze_cells = [[Tiles().cell for x in range(maze_dimensions[0])] for y in range(maze_dimensions[1])] #creates cell objects
-        
         odds = [odd for odd in range(max([maze_dimensions[0], maze_dimensions[1]]) * 2) if odd % 2] #Used to establish cell pattern in tiles
         maze_cells[cell_location[1]][cell_location[0]]['visited'] = True 
         print(f'***Generating basic maze with size {maze_dimensions} at {start_coordinate} on the screen.')
         
         ######GENERATE TILES######
-        
-        print(len(self.tiles))   
-        self.box((maze_dimensions[0] * scale + 1, maze_dimensions[1] * scale + 1), start_coordinate, scale)        
+        self.box((maze_dimensions[0] * 2 + 1, maze_dimensions[1] * 2 + 1), start_coordinate, scale)        
         self.set_tile(self.tiles, (self.tile_size * scale + start_coordinate[0], self.tile_size * scale + start_coordinate[1]), 'aqua_tile', scale)
         
-        
+        ######DFS######
         
         while self.check_completion_status(maze_cells):
             

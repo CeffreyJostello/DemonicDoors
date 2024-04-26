@@ -4,9 +4,12 @@ from levels import Levels
 from settings import *
 class Game:
     def __init__(self):
-        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-        # self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-        self.display = pygame.Surface((SCREEN_WIDTH // 3, SCREEN_HEIGHT // 3))
+        if DEBUG:
+            self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+            # self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+        else:
+            self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+            self.display = pygame.Surface((SCREEN_WIDTH // 3, SCREEN_HEIGHT // 3))
         # self.display = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption('Demonic Doors')
         self.clock = pygame.time.Clock()
@@ -45,9 +48,11 @@ class Game:
                         self.frame.entities.player.stop('left')
                     if event.key == pygame.K_d:
                         self.frame.entities.player.stop('right')
-                        
-            self.frame.render(self.display)
-            self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
+            if DEBUG:
+                self.frame.render(self.screen)
+            else:
+                self.frame.render(self.display)
+                self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
             pygame.display.update()
             self.clock.tick(60)
 
