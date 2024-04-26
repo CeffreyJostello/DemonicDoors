@@ -14,6 +14,9 @@ class Tiles:
         
 
 class MapGeneration:
+    """_summary_
+    This class is used for generating tile patterns in the level class so each level may be called and has a unique map.
+    """
     
     def __init__(self, tile_size=16):
         self.tile_size = tile_size
@@ -87,17 +90,20 @@ class MapGeneration:
                 try:
                     tile_map[str(x_position) + ';' + str(y_position)]['name'] = tile_name
                 except:
-                    print("key eror")
+                    print("key error")
                 
                 x_position += self.tile_size
             y_position += self.tile_size
-            
-
-
-
+               
+    def box(self, size:tuple, start_position:tuple, scale=1):
+        """_summary_
+        Creates the tile data fro a box with size dimension scaled to an integer in self.tiles.
+        Args:
+            size (tuple): Size of box(unscaled)
+            start_position (tuple): Generation location on screen.
+            scale (int, optional): Scale of tiles. Defaults to 1.
+        """
         
-            
-    def box(self, size:tuple, start_position, scale):
         for y in range(size[1]):
             y_position = y * self.tile_size * scale + start_position[1]  
                       
@@ -118,6 +124,13 @@ class MapGeneration:
                     
                     
     def arena(self, size:tuple, start_position=(0, 0), scale=1):
+        """_summary_
+        Creates a walled box with an empty center.
+        Args:
+            size (tuple): Size of box unscaled.
+            start_position (tuple, optional): Generation location on screen. Defaults to (0, 0).
+            scale (int, optional): Scale of Tiles. Defaults to 1.
+        """
         self.box(size, start_position, scale)
         
         for y in range(size[1]):
@@ -140,14 +153,20 @@ class MapGeneration:
                             self.set_tile(self.tiles, (tuple(coordinate)), 'aqua_tile', scale)
                         else:
                             self.set_tile(self.tiles, (tuple(coordinate)), 'ground', scale)
-
-                        
                         coordinate[0] += self.tile_size
                     coordinate[1] += self.tile_size
 
 
     def sploch(self, radius:int, sploches:int) -> list:
-        
+        """_summary_
+        Return random center points that are inside the tile map with a defined radius boundary.
+        Args:
+            radius (int): Extent the inner point can extend.
+            sploches (int): How many points that should be returned.
+
+        Returns:
+            list: Points that are in bounds of the tile map.
+        """
         sploch_points = []
         
         if radius ** 2 > len(self.tiles):
@@ -168,13 +187,13 @@ class MapGeneration:
                 sploch_points.append(origin)
                 
             except KeyError:
-                continue
+                print("Key Error")
             
         return sploch_points
                      
     def crater(self, tile_name:str, radius:int, amount:int):
         
-        start_points = self.sploch(radius, amount)
+        start_points = self.sploch(radius+1, amount)
         for points in start_points:
             coordinate = [int(coord) for coord in points.split(';')]
             start_x = coordinate[0]
@@ -188,12 +207,9 @@ class MapGeneration:
     def check_array_bounds(self, cell_location:list, array) -> list:
         """_summary_
             Checks bounds for a cell in an array and returns the directions available for travel.
-            
-            
         Args:
             cell_location (list): Location in array[y][x] where the input is [x, y].
             array (_type_):  Any two dimensional array.
-
         Returns:
             list: List of directions that are in bounds as tuples. (x, y)
         """
@@ -222,18 +238,24 @@ class MapGeneration:
         return [[cell_location[0] + direction[0], cell_location[1] + direction[1]] for direction in directions if not maze_cell[cell_location[1] + direction[1]][cell_location[0] + direction[0]]['visited']]
         
     def generate_basic_maze(self, maze_dimensions=(5, 5), start_coordinate=(0, 0), scale=1):    
-        
+        """_summary_
+        Generates a maze where each generation is completely random and solvable.
+        Args:
+            maze_dimensions (tuple, optional): Dimensions of nodes. Defaults to (5, 5).
+            start_coordinate (tuple, optional): On screen top-left corner coordinate of maze. Defaults to (0, 0).
+            scale (int, optional): How big the generating squares are 1 = 1x1, 2 = 2x2. Defaults to 1.
+        """
         ######INITIALIZE VARIABLE######
         start_coordinates =  self.get_corner(start_coordinate) #makes sure starting coord is one the tile grid
-        cell_location = [0, 0] #cell index for fds
-        visited_cells = [(0, 0)] #Visited cells for back tracking
+        cell_location = [0, 0] #cell index during current operation
+        visited_cells = [(0, 0)] #Visited cells for back tracking this is a queu type structure
         maze_cells = [[Tiles().cell for x in range(maze_dimensions[0])] for y in range(maze_dimensions[1])] #creates cell objects
         odds = [odd for odd in range(max([maze_dimensions[0], maze_dimensions[1]]) * 2) if odd % 2] #Used to establish cell pattern in tiles
-        maze_cells[cell_location[1]][cell_location[0]]['visited'] = True 
+        maze_cells[cell_location[1]][cell_location[0]]['visited'] = True  #Sets first visited tile to true.
         print(f'***Generating basic maze with size {maze_dimensions} at {start_coordinate} on the screen.')
         
         ######GENERATE TILES######
-        self.box((maze_dimensions[0] * 2 + 1, maze_dimensions[1] * 2 + 1), start_coordinate, scale)        
+        self.box((maze_dimensions[0] * 2 + 1, maze_dimensions[1] * 2 + 1), start_coordinate, scale)       
         self.set_tile(self.tiles, (self.tile_size * scale + start_coordinate[0], self.tile_size * scale + start_coordinate[1]), 'aqua_tile', scale)
         
         ######DFS######

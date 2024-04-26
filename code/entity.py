@@ -22,13 +22,11 @@ class Entity:
         
     def kill(self):
         self.health = 0
-    
         
     def damage(self, hp:int):
         self.health -= hp
         
     def is_dead(self):
-        
         if self.health == 0:
             return True
         else:
@@ -72,6 +70,13 @@ class Entity:
     
     
     def ai(self, tilemap:dict, entity_tiles:dict, target:list):
+        """_summary_
+        This is a general ai funciton thta can be modified per entity type to change behavior without rewriting the update entity function.
+        Args:
+            tilemap (dict): Takes in tilemap for pathfinding purposes.
+            entity_tiles (dict): Takes in other entities for advanced behavior.
+            target (list): Target for more advanced pathfinding ai.
+        """
         pass
     
     def update_entity(self, tilemap:dict, entity_tiles:dict, offset:tuple, taget:list): #This creates a new image of an anetity to be passed to entities.
@@ -128,18 +133,27 @@ class Bullet(Entity):
     
 class Gun:
     def __init__(self, damage, speed, gun_image_name, bullet_image_name):
-        self.bullet = [] #container for bullet images
+        self.bullets = [] #container for bullet images
         self.damage = damage
         self.speed = speed
         self.image_gun = gun_image_name
         self.image_bullet = bullet_image_name
         
-    def shoot(self, angle, position, hitbox_container):
-        self.hitbox_container.append(Bullet(angle, position, self.speed, self.damage, self.image_bullet))
+    def shoot(self, angle:float, position:tuple, hitbox_container:list):
+        """_summary_
+        Creates a bullet object to be updated every frame stores the objects in a list tied to the the gun.
+        Args:
+            angle (float): Angle between mouse and player position.
+            position (tuple): Position of player.
+            hitbox_container (list): Container for hitboxes.
+        """
+        
+        self.bullets.append(Bullet(angle, position, self.speed, self.damage, self.image_bullet))
         
         
     def update(self, angle, position, entity_tiles): #essentially  just spins the gun while attached to the entity
-        pass
+        for bullet in self.bullets:
+            bullet.update_bullet(entity_tiles)
 
 class Player(Entity):
     def __init__(self, position:tuple, size: tuple, name: str):
