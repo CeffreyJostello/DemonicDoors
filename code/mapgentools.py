@@ -22,6 +22,7 @@ class MapGeneration:
         self.tile_size = tile_size
         self.tiles = {}
 
+
     def get_corner(self, coordinate:tuple) -> tuple:
         """_summary_
             Returns the top left corner of a tile given any coordinate within a tile.
@@ -33,19 +34,6 @@ class MapGeneration:
         """
         
         return  (self.tile_size * (coordinate[0] // self.tile_size), self.tile_size * (coordinate[1] // self.tile_size))
-        
-    def print_cells(self, maze_cells):
-        
-        line = ''
-        for y in range(len(maze_cells)):
-
-            for x in range(len(maze_cells[0])):
-                if maze_cells[y][x]['visited']:
-                    line += '* '
-                else:
-                    line += 'o '
-            line += '\n'
-        return line
     
     def check_completion_status(self, cell_array:list) -> bool:
         """_summary_
@@ -79,7 +67,6 @@ class MapGeneration:
             location (tuple): Location of the tile in the tile map i.e. 'x;y'.
             tile_name (str): What tile you want to set it to. Names found in frame in self.assets.
         """
-        
 
         coordinate = list(location)
         x_position = coordinate[0]
@@ -157,13 +144,13 @@ class MapGeneration:
                     coordinate[1] += self.tile_size
 
 
+
     def sploch(self, radius:int, sploches:int) -> list:
         """_summary_
         Return random center points that are inside the tile map with a defined radius boundary.
         Args:
             radius (int): Extent the inner point can extend.
             sploches (int): How many points that should be returned.
-
         Returns:
             list: Points that are in bounds of the tile map.
         """
@@ -192,6 +179,13 @@ class MapGeneration:
         return sploch_points
                      
     def crater(self, tile_name:str, radius:int, amount:int):
+        """_summary_
+        Sets a radius with a certain tile with given coordnates from sploch. Puts them in the class tiles storage.
+        Args:
+            tile_name (str): How it is referred to in the render assets.
+            radius (int): Radius excluding center tile.
+            amount (int): How many craters you want.
+        """
         
         start_points = self.sploch(radius+1, amount)
         for points in start_points:
@@ -234,7 +228,16 @@ class MapGeneration:
         return directions_to_check
     
     def next_possible_steps(self, maze_cell:dict, directions:list, cell_location:list) -> list:
-        
+        """_summary_
+        Returns a list of coordinates of possible places the mae generator could go.
+        Args:
+            maze_cell (dict): Maze nodes with true false type inside.
+            directions (list): Possible directions within bounds.
+            cell_location (list): Current index of the cell in list form.
+
+        Returns:
+            list: List of cell coordinates that can be visited.
+        """
         return [[cell_location[0] + direction[0], cell_location[1] + direction[1]] for direction in directions if not maze_cell[cell_location[1] + direction[1]][cell_location[0] + direction[0]]['visited']]
         
     def generate_basic_maze(self, maze_dimensions=(5, 5), start_coordinate=(0, 0), scale=1):    
@@ -246,7 +249,6 @@ class MapGeneration:
             scale (int, optional): How big the generating squares are 1 = 1x1, 2 = 2x2. Defaults to 1.
         """
         ######INITIALIZE VARIABLE######
-        start_coordinates =  self.get_corner(start_coordinate) #makes sure starting coord is one the tile grid
         cell_location = [0, 0] #cell index during current operation
         visited_cells = [(0, 0)] #Visited cells for back tracking this is a queu type structure
         maze_cells = [[Tiles().cell for x in range(maze_dimensions[0])] for y in range(maze_dimensions[1])] #creates cell objects
@@ -347,8 +349,11 @@ class MapGeneration:
                              
     def clear_tile_map(self):
         self.tiles = {}
-        
+    
     def debug_map_layout(self):
+        """_summary_
+        
+        """
         with open('debug/map_layout.txt', 'w') as file:
             coordinates = [utils.list_coordinate(key) for key in self.tiles]
             for index in range(1, len(coordinates)):

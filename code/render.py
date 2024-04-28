@@ -100,7 +100,7 @@ class Frame:
     
     def __init__(self, levels):
         
-        self.tilemap = levels.level_1()
+        self.tilemap = levels.level_1() #initiates level.
         self.crosshair = Crosshair() #Crosshair handling class
         self.menu = Menu() 
         self.entities = Entities() #Entity handling class
@@ -130,9 +130,10 @@ class Frame:
             ##########MISC##########
             'aimer': load_image('sprites/crosshairs/aimer.png'),
             'pointer':load_image('sprites/crosshairs/pointer.png')
-            
         }
+        
         self.crosshair.set_mous_position((0, 0))
+        
         with open('debug/current_tilemap.json', 'w') as tilemap_file:
             json.dump(self.tilemap, tilemap_file)
 
