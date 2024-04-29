@@ -2,7 +2,7 @@
 
 This is demonic doors.
 
-## V 0.17 ##
+## V 0.18 ##
 
 - NOW WITH TILE COLLISIONS
 - Automatic Maze Generation
@@ -11,6 +11,7 @@ This is demonic doors.
 - Added Arena Mapgen tool
 - Scalable Map Generation Tools
 - Debug Mode
+- Half Working Menu
 
 # HOW TO USE: #
 
