@@ -27,6 +27,11 @@ class Game:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    self.frame.mouse_click = True
+                else:
+                    self.frame.mouse_click = False
+                    
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_w:
                         self.frame.entities.player.move('up')
@@ -61,6 +66,7 @@ class Game:
                         self.frame.entities.player.stop('left')
                     if event.key == pygame.K_d:
                         self.frame.entities.player.stop('right')
+                        
             if DEBUG:
                 self.frame.render(self.screen)
             else:

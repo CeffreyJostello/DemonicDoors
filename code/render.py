@@ -1,9 +1,10 @@
 from entity import Entity, Player, Roach, Bullet
 from utilities import *
 from settings import *
-import pygame
+import pygame, sys
 import json
 import math
+import pente as pente
 from icecream import ic
 
 class Entities:
@@ -65,13 +66,14 @@ class Crosshair:
         pygame.mouse.set_visible(False)
         pygame.mouse.set_pos((SCREEN_WIDTH // 3 // 2, SCREEN_HEIGHT // 3 // 2))
         self.size = (5, 5)
+        self.position = (0, 0)
         
     def set_crosshair(self, name:str, size:tuple): #sets crosshair image.
         self.name = name
         self.size = size
         
-    def generate_hitbox(self, position:tuple):
-        return pygame.Rect(position[0], position[1], self.size[0], self.size[1])
+    def generate_hitbox(self):
+        return pygame.Rect(self.position[0], self.position[1], self.size[0], self.size[1])
     
     def set_mous_position(self, postion:tuple):
         pygame.mouse.set_pos(postion)
@@ -79,9 +81,9 @@ class Crosshair:
 
     def update(self):
             # print("Y postion changed", self.current_position)
-        current_position = pygame.mouse.get_pos()
-        string_position = str(current_position[0]) + ';' + str(current_position[1])
-        return {string_position : {'name':self.name, 'location':current_position}}
+        self.position = pygame.mouse.get_pos()
+        string_position = str(self.position[0]) + ';' + str(self.position[1])
+        return {string_position : {'name':self.name, 'location':self.position}}
     
     
 
@@ -95,8 +97,9 @@ class Frame:
         self.tilemap = levels.level_1() #initiates level.
         self.crosshair = Crosshair() #Crosshair handling class
         self.entities = Entities() #Entity handling class
-        self.crosshair.set_crosshair('pointer', (5, 5))
-        self.menu_open = True
+        self.crosshair.set_crosshair('aimer', (5, 5))
+        self.menu_open = False
+        self.mouse_click = True
         self.tiles_to_render = {}
         self.offset = [0, 0]
         self.render_order = ['tile_map', 'entity', 'crosshair'] #{'backround', 'water', 'floor', 'trap', 'decor', 'wall', 'entity', 'effect', 'particles', 'crosshair'}
@@ -118,11 +121,19 @@ class Frame:
             ##########TILES##########
             'ground' : load_image('sprites/tiles/floor.png'),
             'aqua_tile': load_images('sprites/tiles/aqua_tile/'),
-            ##########MISC##########
+            ##########CURSOR##########
             'aimer': load_image('sprites/crosshairs/aimer.png'),
             'pointer':load_image('sprites/crosshairs/pointer.png'),
+            ##########UI##########
             'menu':load_image('sprites/ui/menu.png'),
-            'resume_button':load_image('sprites/ui/resume_button.png')
+            'resume_button':load_image('sprites/ui/resume_button.png'),
+            'resume_button_hover':load_image('sprites/ui/resume_button_hover.png'),
+            'quit_button':load_image('sprites/ui/quit_button.png'),
+            'quit_button_hover':load_image('sprites/ui/quit_button_hover.png'),
+            'pente_button':load_image('sprites/ui/pente_button.png'),
+            'pente_button_hover':load_image('sprites/ui/pente_button_hover.png'),
+            ##########MISC##########
+            
             
             
         }
@@ -206,7 +217,35 @@ class Frame:
             draw_rect_alpha(surface, (0, 0, 0, 150), (0, 0, 1000, 1000))
             surface.blit(self.assets['menu'], (0, 0))
             surface.blit(self.assets['resume_button'], (0, 0))
+            surface.blit(self.assets['quit_button'], (0, 0))
+            surface.blit(self.assets['pente_button'], (0, 0))
             
+            if DEBUG:
+                draw_rect_alpha(surface, (0, 0, 255, 100), (160, 144, 33, 16))
+                draw_rect_alpha(surface, (0, 0, 255, 100), (208, 144, 33, 16))
+                draw_rect_alpha(surface, (0, 0, 255, 100), (256, 144, 33, 16))
+              
+            quit_button_hitbox = pygame.Rect(208, 144, 33, 16)
+            resume_button_hitbox = pygame.Rect(160, 144, 33, 16)
+            pente_button_hitbox = pygame.Rect(256, 144, 33, 16)
+            mouse_hitbox = self.crosshair.generate_hitbox()
+            if pente_button_hitbox.colliderect(mouse_hitbox):
+                surface.blit(self.assets['pente_button_hover'], (0, 0))
+                if self.mouse_click:
+                    pente.main()
+                    
+            if quit_button_hitbox.colliderect(mouse_hitbox):
+                surface.blit(self.assets['quit_button_hover'], (0, 0))
+                if self.mouse_click:
+                    pygame.quit()
+                    sys.exit()
+            if resume_button_hitbox.colliderect(mouse_hitbox):
+                surface.blit(self.assets['resume_button_hover'], (0, 0))
+                if self.mouse_click:
+                    self.menu_open = False
+                    self.crosshair.set_crosshair('aimer', (5, 5))
+
+                
             cursor_dictionary = self.tiles_to_render['crosshair']
             
             for value in cursor_dictionary.values():
@@ -239,6 +278,7 @@ class Frame:
             for hitbox in self.entities.enemy_hitbox:
                 
                 draw_rect_alpha(surface, (255, 0, 0, 100), hitbox)
+                
             draw_rect_alpha(surface, (0, 255, 0, 100), self.entities.player_hitbox[0])
             
                 
