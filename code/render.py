@@ -97,9 +97,9 @@ class Frame:
         self.tilemap = levels.level_1() #initiates level.
         self.crosshair = Crosshair() #Crosshair handling class
         self.entities = Entities() #Entity handling class
-        self.crosshair.set_crosshair('aimer', (5, 5))
-        self.menu_open = False
-        self.mouse_click = True
+        self.crosshair.set_crosshair('pointer', (5, 5))
+        self.menu_open = True
+        self.mouse_click = False
         self.tiles_to_render = {}
         self.offset = [0, 0]
         self.render_order = ['tile_map', 'entity', 'crosshair'] #{'backround', 'water', 'floor', 'trap', 'decor', 'wall', 'entity', 'effect', 'particles', 'crosshair'}

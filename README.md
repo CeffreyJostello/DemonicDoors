@@ -25,4 +25,6 @@ To run this program, first install the following modules:
 
 To run the game, press the run button at the top right in the main script.
 
+ESC key for the menu.
+
 If you want to change the map or regenerate it, use the f1, f2, f3, or f4 keys.
