@@ -43,6 +43,14 @@ class Game:
                             self.frame.crosshair.set_crosshair('pointer', (5, 5))
                         else:
                             self.frame.crosshair.set_crosshair('aimer', (5, 5))
+                    if event.key == pygame.K_F1:
+                        self.frame.tilemap = self.levels.level_2()
+                    if event.key == pygame.K_F2:
+                        self.frame.tilemap = self.levels.level_1()
+                    if event.key == pygame.K_F3:
+                        self.frame.tilemap = self.levels.level_3()
+                    if event.key == pygame.K_F4:
+                        self.frame.tilemap = self.levels.level_4()
 
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_w:

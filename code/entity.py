@@ -218,7 +218,7 @@ class Player(Entity):
         coordinate = string_coordinate(self.position)
         
         
-        entity_tiles[coordinate] = {'name':self.name, 'location':(self.position[0] + offset[0], self.position[1] + offset[1]), 'angle':0}
+        entity_tiles[coordinate] = {'name':self.name, 'location':(self.position[0] + offset[0], self.position[1] + offset[1] - 10), 'angle':0}
 
 
 class Roach(Entity):
