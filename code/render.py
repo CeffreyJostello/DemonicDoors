@@ -84,14 +84,6 @@ class Crosshair:
         return {string_position : {'name':self.name, 'location':current_position}}
     
     
-class Menu():
-    def __init__(self):
-        pass
-    def open_menu(self):
-        pass
-    def close_menu(self):
-        pass
-    
 
 class Frame:
     """_summary_
@@ -102,11 +94,10 @@ class Frame:
         
         self.tilemap = levels.level_1() #initiates level.
         self.crosshair = Crosshair() #Crosshair handling class
-        self.menu = Menu() 
         self.entities = Entities() #Entity handling class
-        
+        self.crosshair.set_crosshair('pointer', (5, 5))
+        self.menu_open = True
         self.tiles_to_render = {}
-        self.open_menu = False
         self.offset = [0, 0]
         self.render_order = ['tile_map', 'entity', 'crosshair'] #{'backround', 'water', 'floor', 'trap', 'decor', 'wall', 'entity', 'effect', 'particles', 'crosshair'}
         
@@ -129,7 +120,11 @@ class Frame:
             'aqua_tile': load_images('sprites/tiles/aqua_tile/'),
             ##########MISC##########
             'aimer': load_image('sprites/crosshairs/aimer.png'),
-            'pointer':load_image('sprites/crosshairs/pointer.png')
+            'pointer':load_image('sprites/crosshairs/pointer.png'),
+            'menu':load_image('sprites/ui/menu.png'),
+            'resume_button':load_image('sprites/ui/resume_button.png')
+            
+            
         }
         
         self.crosshair.set_mous_position((0, 0))
@@ -169,7 +164,7 @@ class Frame:
         
         # angle = math.degrees(math.asin(opposite/hypotenuse))
         
-        angle = change1 * math.degrees(math.acos((adjacent/hypotenuse)))
+        angle = change1 * math.degrees(math.acos((adjacent/hypotenuse))) if hypotenuse != 0 else 0
         # angle = -math.degrees(math.acos(adjacent/hypotenuse))
 
         # print("Angle:", angle)
@@ -177,20 +172,21 @@ class Frame:
     
         
     def update(self, surface):
-        self.tiles_to_render = {} #resets what tiles have to be rendered every frame for movement
-        screen_center = self.get_player_position(surface)
-        self.offset[0] = round(- screen_center[0] * 10)
-        self.offset[1] = round(- screen_center[1] * 10)
-        #####OFFSET#####
-        self.offset_tiles(self.offset, self.tilemap)
-        #####UPDATE ENTITIES#####
-        self.tiles_to_render['tile_map'] = self.tilemap
-        self.tiles_to_render['entity'] = self.entities.update(self.tilemap, tuple(self.offset), screen_center, self.get_mouse_angle())
-        self.tiles_to_render['crosshair'] = self.crosshair.update()
-        if self.open_menu:
-            pass
+        self.tiles_to_render.clear()
+        if self.menu_open:
+            self.tiles_to_render['crosshair'] = self.crosshair.update()
+            self.tiles_to_render['tile_map'] = self.tilemap
+            
         else:
-            pass
+            screen_center = self.get_player_position(surface)
+            self.offset[0] = round(- screen_center[0] * 10)
+            self.offset[1] = round(- screen_center[1] * 10)
+            #####OFFSET#####
+            self.offset_tiles(self.offset, self.tilemap)
+            #####UPDATE ENTITIES#####
+            self.tiles_to_render['tile_map'] = self.tilemap
+            self.tiles_to_render['entity'] = self.entities.update(self.tilemap, tuple(self.offset), screen_center, self.get_mouse_angle())
+            self.tiles_to_render['crosshair'] = self.crosshair.update()
 
     def render(self, surface):
         """_summary_
@@ -200,26 +196,45 @@ class Frame:
         """
         self.update(surface)
         
-        for order in self.render_order:
-            
-            if order == 'tile_map':
-                for string_coordinate in self.tiles_to_render['tile_map']:
-                    if self.tiles_to_render['tile_map'][string_coordinate]['name'] in directional_tile:
-                        surface.blit(self.assets[self.tiles_to_render[order][string_coordinate]['name']][int(self.tiles_to_render[order][string_coordinate]['variant'])], self.tiles_to_render[order][string_coordinate]['location'])
+        if self.menu_open:
+            for string_coordinate in self.tiles_to_render['tile_map']:
+                if self.tiles_to_render['tile_map'][string_coordinate]['name'] in directional_tile:
+                    surface.blit(self.assets[self.tiles_to_render['tile_map'][string_coordinate]['name']][int(self.tiles_to_render['tile_map'][string_coordinate]['variant'])], self.tiles_to_render['tile_map'][string_coordinate]['location'])
 
-                    else:
-                        surface.blit(self.assets[self.tiles_to_render[order][string_coordinate]['name']], self.tiles_to_render[order][string_coordinate]['location'])
-            else:
-                for string_coordinate in self.tiles_to_render[order]:
-                    
-                    location = self.tiles_to_render[order][string_coordinate]['location']
-                    image = self.assets[self.tiles_to_render[order][string_coordinate]['name']]
-                    
-                    if 'angle' in self.tiles_to_render[order][string_coordinate]:
-                        angle = self.tiles_to_render[order][string_coordinate]['angle']
-                        blitRotateCenter(surface, image, location, angle)
-                    else:
-                        surface.blit(image, location)
+                else:
+                    surface.blit(self.assets[self.tiles_to_render['tile_map'][string_coordinate]['name']], self.tiles_to_render['tile_map'][string_coordinate]['location'])         
+            draw_rect_alpha(surface, (0, 0, 0, 150), (0, 0, 1000, 1000))
+            surface.blit(self.assets['menu'], (0, 0))
+            surface.blit(self.assets['resume_button'], (0, 0))
+            
+            cursor_dictionary = self.tiles_to_render['crosshair']
+            
+            for value in cursor_dictionary.values():
+                surface.blit(self.assets[value['name']], value['location'])
+                
+            # surface.blit(self.assets[self.tiles_to_render])            
+        else:
+            
+            for order in self.render_order:
+                
+                if order == 'tile_map':
+                    for string_coordinate in self.tiles_to_render['tile_map']:
+                        if self.tiles_to_render['tile_map'][string_coordinate]['name'] in directional_tile:
+                            surface.blit(self.assets[self.tiles_to_render[order][string_coordinate]['name']][int(self.tiles_to_render[order][string_coordinate]['variant'])], self.tiles_to_render[order][string_coordinate]['location'])
+
+                        else:
+                            surface.blit(self.assets[self.tiles_to_render[order][string_coordinate]['name']], self.tiles_to_render[order][string_coordinate]['location'])
+                else:
+                    for string_coordinate in self.tiles_to_render[order]:
+                        
+                        location = self.tiles_to_render[order][string_coordinate]['location']
+                        image = self.assets[self.tiles_to_render[order][string_coordinate]['name']]
+                        
+                        if 'angle' in self.tiles_to_render[order][string_coordinate]:
+                            angle = self.tiles_to_render[order][string_coordinate]['angle']
+                            blitRotateCenter(surface, image, location, angle)
+                        else:
+                            surface.blit(image, location)
         if DEBUG:
             for hitbox in self.entities.enemy_hitbox:
                 

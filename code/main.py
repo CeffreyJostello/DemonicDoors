@@ -2,6 +2,7 @@ import pygame, sys
 from render import Frame
 from levels import Levels
 from settings import *
+from utilities import *
 class Game:
     def __init__(self):
         if DEBUG:
@@ -21,7 +22,6 @@ class Game:
 
         while True:
             # self.player.update()
-            
             for event in pygame.event.get():
 
                 if event.type == pygame.QUIT:
@@ -37,7 +37,12 @@ class Game:
                     if event.key == pygame.K_d:
                         self.frame.entities.player.move('right')
                     if event.key == pygame.K_ESCAPE:
-                        pass
+                        self.frame.menu_open = not self.frame.menu_open
+                        if self.frame.menu_open:
+                            
+                            self.frame.crosshair.set_crosshair('pointer', (5, 5))
+                        else:
+                            self.frame.crosshair.set_crosshair('aimer', (5, 5))
 
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_w:
@@ -60,3 +65,4 @@ class Game:
 if __name__ == '__main__':
     game = Game()
     game.run()
+    
