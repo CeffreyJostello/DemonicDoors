@@ -166,7 +166,6 @@ class Player(Entity):
         self.angle = 0
         self.anchor_left = [0, 0] #handle of gun on right hand
         self.anchor_right = [0, 0] #handle of gun on left hand
-        # self.spell = Gun(5, 10, 'basic_spell', 'fire_ball')
         
     
     def get_player_position(self):

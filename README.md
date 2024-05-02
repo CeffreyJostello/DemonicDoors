@@ -28,3 +28,5 @@ To run the game, press the run button at the top right in the main script.
 ESC key for the menu.
 
 If you want to change the map or regenerate it, use the f1, f2, f3, or f4 keys.
+
+The cursor is not fully developed it's an image and will get lost off screen just drag it to the top left and you'll find it if you lose it.

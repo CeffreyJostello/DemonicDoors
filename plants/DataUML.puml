@@ -1,0 +1,44 @@
+@startuml Demonic Doors Data UML
+
+title Demonic Doors Data UML Chart
+Participant Game
+
+Game -> Player : Key Inputs
+Game -> Level : Key Inputs
+
+Level <- MapGenTools : Tile Data
+
+Level -> Frame : Tile Data
+
+Participant Crosshair
+
+Frame -> Entities : Tile Data
+Frame -> Entities : Offset
+Frame -> Entities : Screen Center
+Frame -> Entities : Mouse Angle
+Frame <- Crosshair : Location
+
+Player -> Entities : Location
+Player -> Entities : Hitbox
+Player -> Frame : Offset
+
+Entities <- Frame : Tile Data
+Entities -> Entity : Tile Data
+Entities -> Entity : Offset
+Entities -> Entity : Target
+Entities -> Entity : Angle
+Entities <- Entity : Entity Image
+
+
+Entities -> Player : Tile Data
+Entities -> Player : Offset
+Entities -> Player : Target
+Entities -> Player : Angle
+Entities <- Player : Entity Image
+
+Frame <- Entities : Entity Images
+Frame <- Crosshair : Tile Data
+
+Game <- Frame : Images
+
+@enduml
